@@ -1,0 +1,20 @@
+apiVersion: mutations.gatekeeper.sh/v1
+kind: Assign
+metadata:
+  name: gk-set-apparmor-default
+spec:
+  applyTo:
+  - groups: ["apps"]
+    kinds: ["Deployment"]
+    versions: ["v1"]
+  match:
+    namespaces: ["adguard","adguard-exporter","audiobookshelf","blackbox-exporter","cardsgo","default","discord2whatsapp-stack","duplicati-prom-exporter","frigate","grafana","grafana2whatsapp","m5-stick-proxmox-metrics","minecraft","n8n","prometheus","pve-exporter","speedtest-exporter","traefik-gateway"]
+    scope: Namespaced
+  location: "spec.template.spec.containers[name:*].securityContext.appArmorProfile"
+  parameters:
+    pathTests:
+    - subPath: "spec.template.spec.containers[name:*].securityContext.appArmorProfile"
+      condition: MustNotExist
+    assign:
+      value:
+        type: RuntimeDefault 

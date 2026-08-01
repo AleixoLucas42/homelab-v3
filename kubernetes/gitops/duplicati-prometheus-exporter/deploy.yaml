@@ -1,0 +1,39 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: duplicati-prom-exporter
+  namespace: duplicati-prom-exporter
+spec:
+  replicas: 1
+  revisionHistoryLimit: 0
+  selector:
+    matchLabels:
+      app: duplicati-prom-exporter
+  template:
+    metadata:
+      annotations:
+        instrumentation.opentelemetry.io/inject-python: "opentelemetry-operator/homelab-auto-instrumentation"
+        instrumentation.opentelemetry.io/env.OTEL_TRACES_EXPORTER: "console,otlp"
+        instrumentation.opentelemetry.io/env.OTEL_EXPORTER_OTLP_PROTOCOL: "http/protobuf"
+      labels:
+        app: duplicati-prom-exporter
+    spec:
+      containers:
+        - name: duplicati-prom-exporter
+          image: aleixolucas/duplicati-prometheus-exporter
+          env:
+            - name: TZ
+              value: America/Sao_Paulo
+            - name: LOG_LEVEL
+              value: INFO
+          resources:
+            requests:
+              cpu: "10m"
+              memory: "28Mi"
+            limits:
+              cpu: "100m"
+              memory: "94Mi"
+          securityContext:
+            capabilities:
+              drop:
+                - ALL

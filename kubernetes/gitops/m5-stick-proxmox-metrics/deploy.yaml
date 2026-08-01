@@ -1,0 +1,39 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: m5-stick-proxmox-metrics
+  namespace: m5-stick-proxmox-metrics
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: m5-stick-proxmox-metrics
+  template:
+    metadata:
+      annotations:
+        instrumentation.opentelemetry.io/inject-python: "opentelemetry-operator/homelab-auto-instrumentation"
+        instrumentation.opentelemetry.io/env.OTEL_TRACES_EXPORTER: "console,otlp"
+        instrumentation.opentelemetry.io/env.OTEL_EXPORTER_OTLP_PROTOCOL: "http/protobuf"
+      labels:
+        app: m5-stick-proxmox-metrics
+    spec:
+      containers:
+        - name: m5-stick-proxmox-metrics
+          image: aleixolucas/m5-stick-proxmox-metrics
+          env:
+            - name: TZ
+              value: America/Sao_Paulo
+          envFrom:
+            - secretRef:
+                name: m5-stick-proxmox-metrics-sec
+          resources:
+            requests:
+              cpu: "10m"
+              memory: "48Mi"
+            limits:
+              cpu: "50m"
+              memory: "94Mi"
+          securityContext:
+            capabilities:
+              drop:
+                - ALL

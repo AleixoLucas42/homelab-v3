@@ -1,0 +1,31 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: blackbox-exporter
+  namespace: argocd
+spec:
+  project: internal-lab
+
+  sources:
+    - repoURL: https://prometheus-community.github.io/helm-charts
+      chart: prometheus-blackbox-exporter
+      targetRevision: 11.10.0
+      helm:
+        releaseName: blackbox-exporter
+        valueFiles:
+          - $values/kubernetes/gitops/blackbox-exporter/values.yaml
+
+    - repoURL: git@github.com:AleixoLucas42/homelab-v3.git
+      targetRevision: main
+      ref: values
+
+  destination:
+    name: in-cluster
+    namespace: swarm-prom-stack # Mantemos no namespace de monitoramento!
+
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true

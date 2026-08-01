@@ -1,0 +1,395 @@
+apiVersion: gateway.networking.k8s.io/v1
+kind: HTTPRoute
+metadata:
+  name: argocd-route
+  namespace: argocd
+spec:
+  parentRefs:
+  - group: gateway.networking.k8s.io
+    kind: Gateway
+    name: traefik-gateway
+    namespace: traefik-gateway
+    sectionName: argocd
+  rules:
+  - matches:
+    - path:
+        type: PathPrefix
+        value: /
+    filters:
+    - type: RequestHeaderModifier
+      requestHeaderModifier:
+        add:
+          - name: Cache-Control
+            value: "no-cache, no-store, must-revalidate"
+    backendRefs:
+    - name: argocd-server
+      port: 80
+---
+apiVersion: gateway.networking.k8s.io/v1
+kind: HTTPRoute
+metadata:
+  name: audiobookshelf-route
+  namespace: audiobookshelf
+spec:
+  parentRefs:
+  - group: gateway.networking.k8s.io
+    kind: Gateway
+    name: traefik-gateway
+    namespace: traefik-gateway
+    sectionName: audiobookshelf
+  rules:
+  - matches:
+    - path:
+        type: PathPrefix
+        value: /
+    backendRefs:
+    - name: audiobookshelf
+      port: 80
+---
+apiVersion: gateway.networking.k8s.io/v1
+kind: HTTPRoute
+metadata:
+  name: vault-route
+  namespace: hashicorp-vault
+spec:
+  parentRefs:
+  - group: gateway.networking.k8s.io
+    kind: Gateway
+    name: traefik-gateway
+    namespace: traefik-gateway
+    sectionName: vault
+  rules:
+  - matches:
+    - path:
+        type: PathPrefix
+        value: /
+    backendRefs:
+    - name: vault
+      port: 8200
+---
+apiVersion: gateway.networking.k8s.io/v1
+kind: HTTPRoute
+metadata:
+  name: grafana-route
+  namespace: grafana
+spec:
+  parentRefs:
+  - group: gateway.networking.k8s.io
+    kind: Gateway
+    name: traefik-gateway
+    namespace: traefik-gateway
+    sectionName: grafana
+  rules:
+  - matches:
+    - path:
+        type: PathPrefix
+        value: /
+    backendRefs:
+    - name: grafana
+      port: 80
+---
+apiVersion: gateway.networking.k8s.io/v1
+kind: HTTPRoute
+metadata:
+  name: adguard-route
+  namespace: adguard
+spec:
+  parentRefs:
+  - group: gateway.networking.k8s.io
+    kind: Gateway
+    name: traefik-gateway
+    namespace: traefik-gateway
+    sectionName: adguard
+  rules:
+  - matches:
+    - path:
+        type: PathPrefix
+        value: /
+    backendRefs:
+    - name: adguardhome-svc
+      port: 80
+---
+apiVersion: gateway.networking.k8s.io/v1
+kind: HTTPRoute
+metadata:
+  name: cardsgo-route
+  namespace: traefik-gateway
+spec:
+  parentRefs:
+  - group: gateway.networking.k8s.io
+    kind: Gateway
+    name: traefik-gateway
+    namespace: traefik-gateway
+    sectionName: websecure
+  hostnames:
+    - "cardsgo.ddns.net"
+  rules:
+  - matches:
+    - path:
+        type: PathPrefix
+        value: /
+    filters:
+    - type: ExtensionRef
+      extensionRef:
+        group: traefik.io
+        kind: Middleware
+        name: crowdsec-bouncer
+    backendRefs:
+    - name: cardsgo-svc
+      namespace: cardsgo
+      port: 80
+---
+apiVersion: gateway.networking.k8s.io/v1
+kind: HTTPRoute
+metadata:
+  name: n8n-route
+  namespace: n8n
+spec:
+  parentRefs:
+  - group: gateway.networking.k8s.io
+    kind: Gateway
+    name: traefik-gateway
+    namespace: traefik-gateway
+    sectionName: n8n
+  rules:
+  - matches:
+    - path:
+        type: PathPrefix
+        value: /
+    backendRefs:
+    - name: n8n
+      port: 80
+---
+apiVersion: gateway.networking.k8s.io/v1
+kind: HTTPRoute
+metadata:
+  name: blackbox-exporter-route
+  namespace: blackbox-exporter
+spec:
+  parentRefs:
+  - group: gateway.networking.k8s.io
+    kind: Gateway
+    name: traefik-gateway
+    namespace: traefik-gateway
+    sectionName: blackbox-exporter
+  rules:
+  - matches:
+    - path:
+        type: PathPrefix
+        value: /
+    backendRefs:
+    - name: blackbox-exporter-prometheus-blackbox-exporter
+      port: 9115
+---
+apiVersion: gateway.networking.k8s.io/v1
+kind: HTTPRoute
+metadata:
+  name: prometheus-route
+  namespace: prometheus
+spec:
+  parentRefs:
+  - group: gateway.networking.k8s.io
+    kind: Gateway
+    name: traefik-gateway
+    namespace: traefik-gateway
+    sectionName: prometheus
+  rules:
+  - matches:
+    - path:
+        type: PathPrefix
+        value: /
+    backendRefs:
+    - name: prometheus-stack-kube-prom-prometheus
+      port: 9090
+---
+apiVersion: gateway.networking.k8s.io/v1
+kind: HTTPRoute
+metadata:
+  name: whatsapp-api-route
+  namespace: discord2whatsapp-stack
+spec:
+  parentRefs:
+  - group: gateway.networking.k8s.io
+    kind: Gateway
+    name: traefik-gateway
+    namespace: traefik-gateway
+    sectionName: whatsapp-api
+  rules:
+  - matches:
+    - path:
+        type: PathPrefix
+        value: /
+    backendRefs:
+    - name: whatsapp-api-svc
+      port: 80
+---
+apiVersion: gateway.networking.k8s.io/v1
+kind: HTTPRoute
+metadata:
+  name: duplicati-prom-exporter-route
+  namespace: duplicati-prom-exporter
+spec:
+  parentRefs:
+  - group: gateway.networking.k8s.io
+    kind: Gateway
+    name: traefik-gateway
+    namespace: traefik-gateway
+    sectionName: duplicati-prom-exporter
+  rules:
+  - matches:
+    - path:
+        type: PathPrefix
+        value: /
+    backendRefs:
+    - name: duplicati-prom-exporter-svc
+      port: 80
+---
+apiVersion: gateway.networking.k8s.io/v1
+kind: HTTPRoute
+metadata:
+  name: m5-stick-proxmox-metrics-route
+  namespace: m5-stick-proxmox-metrics
+spec:
+  parentRefs:
+  - group: gateway.networking.k8s.io
+    kind: Gateway
+    name: traefik-gateway
+    namespace: traefik-gateway
+    sectionName: m5-stick-proxmox-metrics
+  rules:
+  - matches:
+    - path:
+        type: PathPrefix
+        value: /
+    backendRefs:
+    - name: m5-stick-proxmox-metrics-svc
+      port: 80
+---
+apiVersion: gateway.networking.k8s.io/v1
+kind: HTTPRoute
+metadata:
+  name: frigate-route
+  namespace: frigate
+spec:
+  parentRefs:
+  - group: gateway.networking.k8s.io
+    kind: Gateway
+    name: traefik-gateway
+    namespace: traefik-gateway
+    sectionName: frigate
+  rules:
+  - matches:
+    - path:
+        type: PathPrefix
+        value: /
+    backendRefs:
+    - name: frigate
+      port: 5000
+---
+apiVersion: gateway.networking.k8s.io/v1
+kind: HTTPRoute
+metadata:
+  name: open-webui-route
+  namespace: open-webui
+spec:
+  parentRefs:
+  - group: gateway.networking.k8s.io
+    kind: Gateway
+    name: traefik-gateway
+    namespace: traefik-gateway
+    sectionName: open-webui
+  rules:
+  - matches:
+    - path:
+        type: PathPrefix
+        value: /
+    backendRefs:
+    - name: open-webui
+      port: 80
+---
+apiVersion: gateway.networking.k8s.io/v1
+kind: HTTPRoute
+metadata:
+  name: crowdsec-lapi-route
+  namespace: crowdsec
+spec:
+  parentRefs:
+  - group: gateway.networking.k8s.io
+    kind: Gateway
+    name: traefik-gateway
+    namespace: traefik-gateway
+    sectionName: crowdsec-lapi
+  rules:
+  - matches:
+    - path:
+        type: PathPrefix
+        value: /
+    backendRefs:
+    - name: crowdsec-service
+      port: 8080
+---
+apiVersion: gateway.networking.k8s.io/v1
+kind: HTTPRoute
+metadata:
+  name: wazuh-route
+  namespace: wazuh-ssl
+spec:
+  parentRefs:
+  - group: gateway.networking.k8s.io
+    kind: Gateway
+    name: traefik-gateway
+    namespace: traefik-gateway
+    sectionName: wazuh
+  rules:
+  - matches:
+    - path:
+        type: PathPrefix
+        value: /
+    backendRefs:
+    - name: wazuh-svc
+      port: 443
+---
+apiVersion: gateway.networking.k8s.io/v1
+kind: HTTPRoute
+metadata:
+  name: duplicati-route
+  namespace: duplicati
+spec:
+  parentRefs:
+  - group: gateway.networking.k8s.io
+    kind: Gateway
+    name: traefik-gateway
+    namespace: traefik-gateway
+    sectionName: duplicati
+  rules:
+  - matches:
+    - path:
+        type: PathPrefix
+        value: /
+    backendRefs:
+    - name: duplicati
+      port: 8200
+---
+apiVersion: gateway.networking.k8s.io/v1
+kind: HTTPRoute
+metadata:
+  name: homarr-route
+  namespace: homarr
+spec:
+  hostnames:
+  - "aleixolab.ddns.net" 
+  parentRefs:
+  - group: gateway.networking.k8s.io
+    kind: Gateway
+    name: traefik-gateway
+    namespace: traefik-gateway
+    sectionName: websecure 
+  rules:
+  - matches:
+    - path:
+        type: PathPrefix
+        value: /
+    backendRefs:
+    - name: homarr
+      port: 7575
+---

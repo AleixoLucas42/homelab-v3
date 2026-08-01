@@ -1,0 +1,13 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: m5-stick-proxmox-metrics-svc
+  namespace: m5-stick-proxmox-metrics
+spec:
+  selector:
+    app: m5-stick-proxmox-metrics
+  ports:
+    - name: metrics
+      port: 80
+      targetPort: 8000
+  type: ClusterIP

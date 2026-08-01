@@ -1,0 +1,43 @@
+apiVersion: external-secrets.io/v1
+kind: ExternalSecret
+metadata:
+  name: crowdsec-keys
+  namespace: crowdsec
+  annotations:
+    argocd.argoproj.io/sync-wave: "10"
+spec:
+  refreshInterval: "5m"
+  secretStoreRef:
+    name: vault-cluster-backend
+    kind: ClusterSecretStore
+  target:
+    name: crowdsec-keys
+  dataFrom:
+    - extract:
+        key: "aleixohome/kubernetes/secrets/crowdsec"
+        conversionStrategy: Default
+        decodingStrategy: None
+        metadataPolicy: None
+        nullBytePolicy: Ignore
+---
+apiVersion: external-secrets.io/v1
+kind: ExternalSecret
+metadata:
+  name: crowdsec-bouncer-key
+  namespace: traefik-gateway
+  annotations:
+    argocd.argoproj.io/sync-wave: "10"
+spec:
+  refreshInterval: "5m"
+  secretStoreRef:
+    name: vault-cluster-backend
+    kind: ClusterSecretStore
+  target:
+    name: crowdsec-bouncer-key
+  dataFrom:
+    - extract:
+        key: "aleixohome/kubernetes/secrets/crowdsec"
+        conversionStrategy: Default
+        decodingStrategy: None
+        metadataPolicy: None
+        nullBytePolicy: Ignore

@@ -1,0 +1,30 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: grafana-tempo
+  namespace: argocd
+spec:
+  project: internal-lab
+  sources:
+    - repoURL: 'https://grafana-community.github.io/helm-charts'
+      targetRevision: 1.24.4 
+      chart: tempo 
+      helm:
+        releaseName: tempo
+        valueFiles:
+          - $values/kubernetes/gitops/grafana-tempo/values.yaml
+
+    - repoURL: git@github.com:AleixoLucas42/homelab-v3.git
+      targetRevision: main
+      ref: values
+
+  destination:
+    name: in-cluster
+    namespace: monitoring
+
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true

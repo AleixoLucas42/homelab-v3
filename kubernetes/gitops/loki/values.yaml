@@ -1,0 +1,12 @@
+loki:
+  image:
+    tag: 2.9.11
+
+  config:
+    querier:
+      max_concurrent: 2048
+
+    limits_config:
+      max_query_parallelism: 8192
+      max_query_series: 100000
+      max_entries_limit_per_query: 50000

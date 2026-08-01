@@ -1,0 +1,101 @@
+envFromSecrets:
+  - frigate-sec
+
+config: |
+  logger:
+    default: warning
+
+  ffmpeg:
+    hwaccel_args: []
+  
+  mqtt:
+    enabled: false
+  tls:
+    enabled: false
+
+  go2rtc:
+    api:
+      origin: '*'
+    streams:
+      marvin:
+        - rtsp://{FRIGATE_CAMERA_1_USER}:{FRIGATE_CAMERA_1_PASSWORD}@10.11.12.200:554/onvif2
+      
+      marvin_hq:
+        - rtsp://{FRIGATE_CAMERA_1_USER}:{FRIGATE_CAMERA_1_PASSWORD}@10.11.12.200:554/onvif1
+
+      cozinha:
+        - rtsp://{FRIGATE_CAMERA_2_USER}:{FRIGATE_CAMERA_2_PASSWORD}@10.11.12.202:554/onvif2
+      
+      cozinha_hq:
+        - rtsp://{FRIGATE_CAMERA_2_USER}:{FRIGATE_CAMERA_2_PASSWORD}@10.11.12.202:554/onvif1
+
+  cameras:
+    marvin:
+      enabled: true
+      ffmpeg:
+        input_args: preset-rtsp-restream
+        inputs:
+          - path: rtsp://127.0.0.1:8554/marvin_hq
+            roles:
+              - record
+              
+      detect:
+        enabled: false
+        width: 1920
+        height: 1080
+        
+      record:
+        enabled: true
+        retain:
+          days: 7
+          mode: all
+          
+      snapshots:
+        enabled: false
+
+    cozinha:
+      enabled: true
+      ffmpeg:
+        input_args: preset-rtsp-restream
+        inputs:
+          - path: rtsp://127.0.0.1:8554/cozinha_hq
+            roles:
+              - record
+              
+      detect:
+        enabled: false
+        width: 1920
+        height: 1080
+        
+      record:
+        enabled: true
+        retain:
+          days: 7
+          mode: all
+          
+      snapshots:
+        enabled: false
+
+  version: 0.16
+
+image:
+  repository: ghcr.io/blakeblackshear/frigate
+  tag: 0.16.0
+
+resources:
+  requests:
+    cpu: 250m
+    memory: 1024Mi
+  limits:
+    cpu: 1000m
+    memory: 2048Mi
+
+persistence:
+  config:
+    enabled: true
+    size: "1Gi"
+    storageClass: "local-path"
+  media:
+    enabled: true
+    size: "30Gi"
+    storageClass: "local-path"

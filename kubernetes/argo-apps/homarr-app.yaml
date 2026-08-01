@@ -1,0 +1,31 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: homarr
+  namespace: argocd
+spec:
+  project: internal-lab
+
+  sources:
+    - repoURL: 'https://homarr-labs.github.io/charts/'
+      targetRevision: 8.24.0
+      chart: homarr
+      helm:
+        releaseName: homarr
+        valueFiles:
+          - $values/kubernetes/gitops/homarr/values.yaml
+
+    - repoURL: git@github.com:AleixoLucas42/homelab-v3.git
+      targetRevision: main
+      ref: values
+
+  destination:
+    name: in-cluster
+    namespace: homarr
+
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true

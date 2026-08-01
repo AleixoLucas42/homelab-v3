@@ -1,0 +1,24 @@
+persistence:
+  enabled: true
+  size: 4Gi
+  storageClass: "local-path"
+
+ollama:
+  enabled: false
+
+pipelines:
+  enabled: false
+
+websocket:
+  redis:
+    enabled: true
+
+extraEnvVars:
+  - name: ENABLE_AUTOMATIONS
+    value: "False"
+  - name: ENABLE_CALENDAR
+    value: "False"
+  - name: ENABLE_AUTO_UPDATE
+    value: "False"
+  - name: ENABLE_IMAGE_GENERATION
+    value: "False"

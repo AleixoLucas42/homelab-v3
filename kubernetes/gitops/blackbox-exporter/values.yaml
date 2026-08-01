@@ -1,0 +1,27 @@
+config:
+  modules:
+    http_2xx:
+      prober: http
+      timeout: 5s
+      http:
+        tls_config:
+          insecure_skip_verify: true
+    tcp_connect:
+      prober: tcp
+      timeout: 5s
+    icmp_test:
+      prober: icmp
+      timeout: 5s
+      icmp:
+        preferred_ip_protocol: ip4
+
+serviceMonitor:
+  enabled: true
+
+resources:
+  requests:
+    memory: "24Mi"
+    cpu: "10m"
+  limits:
+    memory: "128Mi"
+    cpu: "100m"

@@ -1,0 +1,142 @@
+apiVersion: v1
+kind: Secret
+metadata:
+  name: additional-scrape-configs
+  namespace: prometheus
+type: Opaque
+stringData:
+  prometheus-additional.yaml: |
+    - job_name: 'crowdsec-pfsense'
+      metrics_path: '/metrics'
+      scrape_interval: 1m
+      scrape_timeout: 20s
+      static_configs:
+      - targets:
+        - 10.11.50.254:6060
+
+    - job_name: 'crowdsec-appsec'
+      metrics_path: '/metrics'
+      scrape_interval: 1m
+      scrape_timeout: 20s
+      static_configs:
+      - targets:
+        - crowdsec-appsec-service.crowdsec.svc.cluster.local:6060
+
+    - job_name: 'crowdsec-agent'
+      metrics_path: '/metrics'
+      scrape_interval: 1m
+      scrape_timeout: 20s
+      static_configs:
+      - targets:
+        - crowdsec-agent-service.crowdsec.svc.cluster.local:6060
+
+    - job_name: 'crowdsec-service'
+      metrics_path: '/metrics'
+      scrape_interval: 1m
+      scrape_timeout: 20s
+      static_configs:
+      - targets:
+        - crowdsec-service.crowdsec.svc.cluster.local:6060
+
+    - job_name: 'traefik'
+      metrics_path: '/metrics'
+      scrape_interval: 30s
+      scrape_timeout: 20s
+      static_configs:
+      - targets:
+        - traefik.traefik-gateway.svc.cluster.local:9100
+
+    - job_name: 'argocd-server-metrics'
+      metrics_path: '/metrics'
+      scrape_interval: 1m
+      scrape_timeout: 30s
+      static_configs:
+      - targets:
+        - argocd-server-metrics.argocd.svc.cluster.local:8083
+
+    - job_name: 'argocd-metrics'
+      metrics_path: '/metrics'
+      scrape_interval: 1m
+      scrape_timeout: 30s
+      static_configs:
+      - targets:
+        - argocd-metrics.argocd.svc.cluster.local:8082
+
+    - job_name: 'duplicati-exporter'
+      scrape_interval: 2m
+      scrape_timeout: 30s
+      static_configs:
+      - targets:
+        - duplicati-prom-exporter-svc.duplicati-prom-exporter.svc.cluster.local
+
+    - job_name: 'speedtest-exporter'
+      scrape_interval: 60m
+      scrape_timeout: 3m
+      static_configs:
+      - targets:
+        - speedtest-exporter.speedtest-exporter.svc.cluster.local
+
+    - job_name: 'adguard-exporter'
+      static_configs:
+        - targets: ['adguard-exporter-svc.adguard-exporter.svc.cluster.local:9618']
+
+    - job_name: 'pfsense'
+      metrics_path: '/metrics'
+      scrape_interval: 30s
+      scrape_timeout: 20s
+      static_configs:
+      - targets:
+        - 10.11.12.254:9100
+  
+    - job_name: 'blackbox_http'
+      metrics_path: /probe
+      params:
+        module: [http_2xx]
+      scrape_interval: 2m
+      scrape_timeout: 2m
+      static_configs:
+        - targets:
+          - https://cardsgo.ddns.net
+      relabel_configs:
+        - source_labels: [__address__]
+          target_label: __param_target
+        - source_labels: [__param_target]
+          target_label: instance
+        - target_label: __address__
+          replacement: blackbox-exporter-prometheus-blackbox-exporter.blackbox-exporter.svc.cluster.local:9115
+
+    - job_name: 'blackbox_icmp'
+      metrics_path: /probe
+      params:
+        module: [icmp_test]
+      scrape_interval: 1m
+      scrape_timeout: 1m
+      static_configs:
+        - targets:
+          - 10.11.51.2
+          - 10.11.50.4
+          - 10.11.50.3
+          - 10.11.12.254
+          - 10.11.12.253
+          - 10.11.12.249
+          - 10.11.12.200
+          - 10.11.12.201
+          - 10.11.12.202
+
+      relabel_configs:
+        - source_labels: [__address__]
+          target_label: __param_target
+        - source_labels: [__param_target]
+          target_label: instance
+        - target_label: __address__
+          replacement: blackbox-exporter-prometheus-blackbox-exporter.blackbox-exporter.svc.cluster.local:9115
+
+    - job_name: pve-exporter
+      metrics_path: '/pve'
+      scrape_interval: 30s
+      scrape_timeout: 20s
+      static_configs:
+      - targets:
+        - pve-exporter-svc.pve-exporter.svc.cluster.local:9221
+      params:
+        target: [10.11.12.253]

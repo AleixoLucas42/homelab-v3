@@ -1,0 +1,43 @@
+minecraftServer:
+  eula: true
+  version: "1.21.5"
+  difficulty: "hard"
+  maxPlayers: 5
+  pvp: false
+  memory: "2G"
+  serviceType: LoadBalancer
+
+extraEnv:
+  ENABLE_WHITELIST: "true"
+  SERVER_NAME: "homelab-minecraft-server"
+  ENABLE_AUTOSTOP: "true"
+  AUTOSTOP_TIMEOUT_INIT: "60"
+  AUTOSTOP_TIMEOUT_EST: "60"
+  AUTOSTOP_PERIOD: "7200"
+  TZ: "America/Sao_Paulo"
+
+tty: true
+stdin: true
+
+resources:
+  requests:
+    memory: "2096Mi"
+  limits:
+    memory: "2096Mi"
+
+persistence:
+  dataDir:
+    enabled: true
+    storageClass: "local-path"
+    size: 5Gi
+
+securityContext:
+  capabilities:
+    drop:
+      - ALL
+    add:
+      - DAC_OVERRIDE
+      - SETGID
+      - SETUID
+
+replicaCount: 0

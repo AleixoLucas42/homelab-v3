@@ -1,0 +1,33 @@
+kubeStateMetrics:
+  enabled: true
+alertmanager:
+  enabled: false
+
+defaultRules:
+  create: false
+
+grafana:
+  enabled: false
+
+prometheus:
+  prometheusSpec:
+    enableRemoteWriteReceiver: true
+    podMonitorSelectorNilUsesHelmValues: false
+    serviceMonitorSelectorNilUsesHelmValues: false
+
+    retention: 7d
+
+    storageSpec:
+      volumeClaimTemplate:
+        spec:
+          storageClassName: local-path
+          accessModes:
+            - ReadWriteOnce
+          resources:
+            requests:
+              storage: 5Gi
+
+    additionalScrapeConfigsSecret:
+      enabled: true
+      name: additional-scrape-configs
+      key: prometheus-additional.yaml

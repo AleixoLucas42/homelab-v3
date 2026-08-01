@@ -1,0 +1,21 @@
+apiVersion: external-secrets.io/v1
+kind: ExternalSecret
+metadata:
+  name: m5-stick-proxmox-metrics-sec
+  namespace: m5-stick-proxmox-metrics 
+  annotations:
+    argocd.argoproj.io/sync-wave: "10"
+spec:
+  refreshInterval: "5m"
+  secretStoreRef:
+    name: vault-cluster-backend
+    kind: ClusterSecretStore
+  target:
+    name: m5-stick-proxmox-metrics-sec
+  dataFrom:
+    - extract:
+        key: "aleixohome/kubernetes/secrets/m5-stick-proxmox-metrics"
+        conversionStrategy: Default
+        decodingStrategy: None
+        metadataPolicy: None
+        nullBytePolicy: Ignore

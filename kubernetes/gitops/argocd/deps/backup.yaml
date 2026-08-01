@@ -1,0 +1,69 @@
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: argocd-backup-sa
+  namespace: argocd
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: argocd-backup-role
+  namespace: argocd
+rules:
+  - apiGroups: [""]
+    resources: ["configmaps", "secrets"]
+    verbs: ["get", "list"]
+  - apiGroups: ["argoproj.io"]
+    resources: ["applications", "appprojects", "applicationsets"]
+    verbs: ["get", "list"]
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: argocd-backup-admin-binding
+  namespace: argocd
+subjects:
+  - kind: ServiceAccount
+    name: argocd-backup-sa
+    namespace: argocd
+roleRef:
+  kind: Role
+  name: argocd-backup-role
+  apiGroup: rbac.authorization.k8s.io
+---
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: argocd-backup
+  namespace: argocd
+spec:
+  schedule: "0 3 * * *"
+  concurrencyPolicy: Forbid
+  startingDeadlineSeconds: 300
+  successfulJobsHistoryLimit: 2
+  failedJobsHistoryLimit: 1
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          serviceAccountName: argocd-backup-sa
+          restartPolicy: OnFailure
+          containers:
+            - name: argocd-backup
+              imagePullPolicy: IfNotPresent
+              image: quay.io/argoproj/argocd
+              command: ["/bin/sh", "-c"]
+              args:
+                - |
+                  set -e
+                  echo "Starting backup process..."
+                  argocd admin export -n argocd > /app/backups/backup.yaml
+                  echo "Backup completed successfully!"
+              volumeMounts:
+                - name: backup-storage
+                  mountPath: /app/backups
+          volumes:
+            - name: backup-storage
+              hostPath:
+                path: /mnt/argocd-backups
+                type: DirectoryOrCreate

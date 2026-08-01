@@ -1,0 +1,75 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: discord2whatsapp-stack
+  namespace: discord2whatsapp-stack
+spec:
+  replicas: 1
+  revisionHistoryLimit: 0
+  selector:
+    matchLabels:
+      app: discord2whatsapp-stack
+  template:
+    metadata:
+      annotations:
+        instrumentation.opentelemetry.io/inject-python: "opentelemetry-operator/homelab-auto-instrumentation"
+        instrumentation.opentelemetry.io/env.OTEL_TRACES_EXPORTER: "console,otlp"
+        instrumentation.opentelemetry.io/env.OTEL_EXPORTER_OTLP_PROTOCOL: "http/protobuf"
+      labels:
+        app: discord2whatsapp-stack
+    spec:
+      containers:
+        - name: whatsapp-api
+          image: avoylenko/wwebjs-api:edge
+          env:
+            - name: ENABLE_WEBHOOK
+              value: "FALSE"
+            - name: MAX_ATTACHMENT_SIZE
+              value: "1000000000"
+            - name: WEB_VERSION_CACHE_TYPE
+              value: "remote"
+            - name: SET_MESSAGES_AS_SEEN
+              value: "FALSE"
+            - name: ENABLE_SWAGGER_ENDPOINT
+              value: "TRUE"
+            - name: RECOVER_SESSIONS
+              value: "TRUE"
+            - name: TZ
+              value: "America/Sao_Paulo"
+          resources:
+            requests:
+              cpu: "500m"
+              memory: "1Gi"
+            limits:
+              cpu: "1000m"
+              memory: "2Gi"
+          securityContext:
+            capabilities:
+              drop:
+                - ALL
+          volumeMounts:
+            - name: sessions-storage
+              mountPath: /usr/src/app/sessions
+        - name: discord-bot
+          image: aleixolucas/disc_wpp_bot@sha256:6f420dfa0ac864c27e6baa195d55632713c5343b22902ff39bdb2c3050b88072
+          env:
+            - name: TZ
+              value: "America/Sao_Paulo"
+          envFrom:
+            - secretRef:
+                name: discord-bot-sec
+          resources:
+            requests:
+              cpu: "10m"
+              memory: "48Mi"
+            limits:
+              cpu: "50m"
+              memory: "94Mi"
+          securityContext:
+            capabilities:
+              drop:
+                - ALL
+      volumes:
+        - name: sessions-storage
+          persistentVolumeClaim:
+            claimName: whatsapp-sessions-pvc

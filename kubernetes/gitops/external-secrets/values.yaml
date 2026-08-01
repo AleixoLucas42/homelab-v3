@@ -1,0 +1,40 @@
+installCRDs: true
+
+replicaCount: 2
+
+leaderElect: true 
+resources:
+  requests:
+    cpu: 10m
+    memory: 64Mi
+  limits:
+    cpu: 100m
+    memory: 256Mi
+
+webhook:
+  replicaCount: 2
+  resources:
+    requests:
+      cpu: 10m
+      memory: 64Mi
+    limits:
+      cpu: 100m
+      memory: 256Mi
+
+certController:
+  replicaCount: 1 
+  resources:
+    requests:
+      cpu: 10m
+      memory: 64Mi
+    limits:
+      cpu: 100m
+      memory: 256Mi
+serviceMonitor:
+  enabled: true
+  additionalLabels:
+    release: prometheus 
+
+metrics:
+  service:
+    enabled: true

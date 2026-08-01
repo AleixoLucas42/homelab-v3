@@ -1,0 +1,47 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: adguard-exporter
+spec:
+  replicas: 1
+  revisionHistoryLimit: 0
+  selector:
+    matchLabels:
+      app: adguard-exporter
+  template:
+    metadata:
+      labels:
+        app: adguard-exporter
+    spec:
+      containers:
+        - name: adguard-exporter
+          image: ghcr.io/henrywhitaker3/adguard-exporter:latest
+          env:
+            - name: TZ
+              value: America/Sao_Paulo
+            - name: ADGUARD_SERVERS
+              valueFrom:
+                secretKeyRef:
+                  name: adguard-exporter-sec
+                  key: ADGUARD_SERVERS
+            - name: ADGUARD_USERNAMES
+              valueFrom:
+                secretKeyRef:
+                  name: adguard-exporter-sec
+                  key: ADGUARD_USERNAMES
+            - name: ADGUARD_PASSWORDS
+              valueFrom:
+                secretKeyRef:
+                  name: adguard-exporter-sec
+                  key: ADGUARD_PASSWORDS
+          resources:
+            requests:
+              cpu: "10m"
+              memory: "16Mi"
+            limits:
+              cpu: "50m"
+              memory: "64Mi"
+          securityContext:
+            capabilities:
+              drop:
+                - ALL

@@ -1,0 +1,21 @@
+apiVersion: external-secrets.io/v1
+kind: ExternalSecret
+metadata:
+  name: pve-exporter-sec
+  namespace: pve-exporter 
+  annotations:
+    argocd.argoproj.io/sync-wave: "10"
+spec:
+  refreshInterval: "5m"
+  secretStoreRef:
+    name: vault-cluster-backend
+    kind: ClusterSecretStore
+  target:
+    name: pve-exporter-sec
+  dataFrom:
+    - extract:
+        key: "aleixohome/kubernetes/secrets/pve-exporter"
+        conversionStrategy: Default
+        decodingStrategy: None
+        metadataPolicy: None
+        nullBytePolicy: Ignore

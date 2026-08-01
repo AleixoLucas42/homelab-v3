@@ -1,0 +1,35 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: grafana2whatsapp
+  namespace: grafana2whatsapp
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: grafana2whatsapp
+  template:
+    metadata:
+      labels:
+        app: grafana2whatsapp
+    spec:
+      containers:
+        - name: grafana2whatsapp
+          image: aleixolucas/grafana2whatsapp
+          env:
+            - name: TZ
+              value: America/Sao_Paulo
+          envFrom:
+            - secretRef:
+                name: grafana2whatsapp-sec
+          resources:
+            requests:
+              cpu: "10m"
+              memory: "24Mi"
+            limits:
+              cpu: "50m"
+              memory: "64Mi"
+          securityContext:
+            capabilities:
+              drop:
+                - ALL

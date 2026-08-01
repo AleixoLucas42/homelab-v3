@@ -1,0 +1,35 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: opentelemetry-operator
+  namespace: argocd
+spec:
+  project: internal-lab
+
+  sources:
+    - repoURL: 'https://open-telemetry.github.io/opentelemetry-helm-charts'
+      targetRevision: 0.115.0
+      chart: opentelemetry-operator
+      helm:
+        releaseName: opentelemetry-operator
+        valueFiles:
+          - $values/kubernetes/gitops/otel-operator/values.yaml
+
+    - repoURL: git@github.com:AleixoLucas42/homelab-v3.git
+      targetRevision: main
+      ref: values
+
+    - repoURL: git@github.com:AleixoLucas42/homelab-v3.git
+      targetRevision: main
+      path: kubernetes/gitops/otel-operator/deps/
+
+  destination:
+    name: in-cluster
+    namespace: opentelemetry-operator
+
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true

@@ -1,0 +1,13 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: cardsgo-svc
+  namespace: cardsgo
+spec:
+  selector:
+    app: cardsgo
+  ports:
+    - name: metrics
+      port: 80
+      targetPort: 5000
+  type: ClusterIP

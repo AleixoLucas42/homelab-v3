@@ -1,0 +1,21 @@
+apiVersion: external-secrets.io/v1
+kind: ExternalSecret
+metadata:
+  name: cardsgo-sec
+  namespace: cardsgo 
+  annotations:
+    argocd.argoproj.io/sync-wave: "10"
+spec:
+  refreshInterval: "5m"
+  secretStoreRef:
+    name: vault-cluster-backend
+    kind: ClusterSecretStore
+  target:
+    name: cardsgo-sec
+  dataFrom:
+    - extract:
+        key: "aleixohome/kubernetes/secrets/cardsgo"
+        conversionStrategy: Default
+        decodingStrategy: None
+        metadataPolicy: None
+        nullBytePolicy: Ignore

@@ -1,0 +1,38 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: cert-manager
+  namespace: argocd
+spec:
+  project: internal-lab
+
+  sources:
+    # 1. Chart Helm Oficial do cert-manager
+    - repoURL: https://charts.jetstack.io
+      chart: cert-manager
+      targetRevision: v1.14.4
+      helm:
+        releaseName: cert-manager
+        valueFiles:
+          - $values/kubernetes/gitops/cert-manager/values.yaml
+
+    # 2. Referência do Git para o values.yaml ($values)
+    - repoURL: git@github.com:AleixoLucas42/homelab-v3.git
+      targetRevision: main
+      ref: values
+
+    # 3. Manifestos extras (ClusterIssuer, Certificate, etc.)
+    - repoURL: git@github.com:AleixoLucas42/homelab-v3.git
+      targetRevision: main
+      path: kubernetes/gitops/cert-manager/deps/
+
+  destination:
+    name: in-cluster
+    namespace: cert-manager
+
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true

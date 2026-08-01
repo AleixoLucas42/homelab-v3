@@ -1,0 +1,342 @@
+experimental:
+  plugins:
+    bouncer:
+      moduleName: github.com/maxlerebourg/crowdsec-bouncer-traefik-plugin
+      version: v1.4.5
+volumes:
+  - name: crowdsec-bouncer-key
+    mountPath: /etc/traefik/crowdsec
+    type: secret
+    secretName: crowdsec-bouncer-key
+service:
+  enabled: true
+  type: LoadBalancer
+  externalTrafficPolicy: Local
+
+metrics:
+  prometheus:
+    enabled: true
+    entryPoint: metrics
+    addEntryPointsLabels: true
+    addRoutersLabels: true
+    addServicesLabels: true
+
+additionalArguments:
+  - "--tracing.serviceName=traefik"
+  - "--tracing.sampleRate=1.0"
+  - "--tracing.otlp.grpc.endpoint=otel-collector-collector.opentelemetry-operator.svc.cluster.local:4317"
+  - "--tracing.otlp.grpc.insecure=true"
+
+ingressRoute:
+  dashboard:
+    enabled: true
+
+providers:
+  kubernetesGateway:
+    enabled: true
+
+ports:
+  metrics:
+    port: 9100
+    expose:
+      default: true
+    exposedPort: 9100
+    protocol: TCP
+  web:
+    port: 8000
+    expose:
+      default: true
+    exposedPort: 80
+    proxyProtocol:
+      trustedIPs:
+        - "10.11.51.2/32"
+        - "10.11.50.0/24"
+    forwardedHeaders:
+      trustedIPs:
+        - "10.11.51.2/32"
+        - "10.11.50.0/24"
+    http:
+      redirections:
+        entryPoint:
+          to: websecure
+          scheme: https
+          permanent: true
+  websecure:
+    port: 8443
+    expose:
+      default: true
+    exposedPort: 443
+    proxyProtocol:
+      trustedIPs:
+        - "10.11.51.2/32"
+        - "10.11.50.0/24"
+    forwardedHeaders:
+      trustedIPs:
+        - "10.11.51.2/32"
+        - "10.11.50.0/24"
+  argocd:
+    port: 8010
+    expose:
+      default: true
+    exposedPort: 8010
+    protocol: TCP
+  audiobookshelf:
+    port: 8020
+    expose:
+      default: true
+    exposedPort: 8020
+    protocol: TCP
+  vault:
+    port: 8030
+    expose:
+      default: true
+    exposedPort: 8030
+    protocol: TCP
+  grafana:
+    port: 8040
+    expose:
+      default: true
+    exposedPort: 8040
+    protocol: TCP
+  adguard:
+    port: 8050
+    expose:
+      default: true
+    exposedPort: 8050
+    protocol: TCP
+  n8n:
+    port: 8060
+    expose:
+      default: true
+    exposedPort: 8060
+    protocol: TCP
+  blackbox-exporter:
+    port: 8070
+    expose:
+      default: true
+    exposedPort: 8070
+    protocol: TCP
+  prometheus:
+    port: 8090
+    expose:
+      default: true
+    exposedPort: 8090
+    protocol: TCP
+  whatsapp-api:
+    port: 9010
+    expose:
+      default: true
+    exposedPort: 9010
+    protocol: TCP
+  duplicati-prom-exporter:
+    port: 9020
+    expose:
+      default: true
+    exposedPort: 9020
+    protocol: TCP
+  m5-stick-proxmox-metrics:
+    port: 9030
+    expose:
+      default: true
+    exposedPort: 9030
+    protocol: TCP
+  frigate:
+    port: 9040
+    expose:
+      default: true
+    exposedPort: 9040
+    protocol: TCP
+  proxmox:
+    port: 9050
+    expose:
+      default: true
+    exposedPort: 9050
+    protocol: TCP
+  pfsense:
+    port: 9060
+    expose:
+      default: true
+    exposedPort: 9060
+    protocol: TCP
+  open-webui:
+    port: 9070
+    expose:
+      default: true
+    exposedPort: 9070
+    protocol: TCP
+  crowdsec-lapi:
+    port: 9080
+    expose:
+      default: true
+    exposedPort: 9080
+    protocol: TCP
+  wazuh:
+    port: 1010
+    expose:
+      default: true
+    exposedPort: 1010
+    protocol: TCP
+  duplicati:
+    port: 1020
+    expose:
+      default: true
+    exposedPort: 1020
+    protocol: TCP
+
+gateway:
+  enabled: true
+  name: traefik-gateway
+  namespace: traefik-gateway
+  listeners:
+    web:
+      port: 8000
+      protocol: HTTP
+      namespacePolicy:
+        from: All
+    websecure:
+      port: 8443
+      protocol: HTTPS
+      namespacePolicy:
+        from: All
+      certificateRefs:
+        - name: aleixolab-tls
+        - name: cardsgo-tls
+    argocd:
+      port: 8010
+      protocol: HTTPS
+      namespacePolicy:
+        from: All
+      certificateRefs:
+        - name: aleixolab-tls
+    audiobookshelf:
+      port: 8020
+      protocol: HTTPS
+      namespacePolicy:
+        from: All
+      certificateRefs:
+        - name: aleixolab-tls
+    vault:
+      port: 8030
+      protocol: HTTPS
+      namespacePolicy:
+        from: All
+      certificateRefs:
+        - name: aleixolab-tls
+    grafana:
+      port: 8040
+      protocol: HTTPS
+      namespacePolicy:
+        from: All
+      certificateRefs:
+        - name: aleixolab-tls
+    adguard:
+      port: 8050
+      protocol: HTTPS
+      namespacePolicy:
+        from: All
+      certificateRefs:
+        - name: aleixolab-tls
+    n8n:
+      port: 8060
+      protocol: HTTPS
+      namespacePolicy:
+        from: All
+      certificateRefs:
+        - name: aleixolab-tls
+    blackbox-exporter:
+      port: 8070
+      protocol: HTTPS
+      namespacePolicy:
+        from: All
+      certificateRefs:
+        - name: aleixolab-tls
+    prometheus:
+      port: 8090
+      protocol: HTTPS
+      namespacePolicy:
+        from: All
+      certificateRefs:
+        - name: aleixolab-tls
+    whatsapp-api:
+      port: 9010
+      protocol: HTTPS
+      namespacePolicy:
+        from: All
+      certificateRefs:
+        - name: aleixolab-tls
+    duplicati-prom-exporter:
+      port: 9020
+      protocol: HTTPS
+      namespacePolicy:
+        from: All
+      certificateRefs:
+        - name: aleixolab-tls
+    m5-stick-proxmox-metrics:
+      port: 9030
+      protocol: HTTPS
+      namespacePolicy:
+        from: All
+      certificateRefs:
+        - name: aleixolab-tls
+    frigate:
+      port: 9040
+      protocol: HTTPS
+      namespacePolicy:
+        from: All
+      certificateRefs:
+        - name: aleixolab-tls
+    proxmox:
+      port: 9050
+      protocol: HTTPS
+      namespacePolicy:
+        from: All
+      certificateRefs:
+        - name: aleixolab-tls
+    pfsense:
+      port: 9060
+      protocol: HTTPS
+      namespacePolicy:
+        from: All
+      certificateRefs:
+        - name: aleixolab-tls
+    open-webui:
+      port: 9070
+      protocol: HTTPS
+      namespacePolicy:
+        from: All
+      certificateRefs:
+        - name: aleixolab-tls
+    crowdsec-lapi:
+      port: 9080
+      protocol: HTTPS
+      namespacePolicy:
+        from: All
+      certificateRefs:
+        - name: aleixolab-tls
+    wazuh:
+      port: 1010
+      protocol: HTTPS
+      namespacePolicy:
+        from: All
+      certificateRefs:
+        - name: aleixolab-tls
+    duplicati:
+      port: 1020
+      protocol: HTTPS
+      namespacePolicy:
+        from: All
+      certificateRefs:
+        - name: aleixolab-tls
+
+logs:
+  general:
+    level: INFO
+    format: json
+  access:
+    enabled: true
+    format: json
+
+tlsOptions:
+  default:
+    sniStrict: true
+    minVersion: VersionTLS12

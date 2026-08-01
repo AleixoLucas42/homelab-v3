@@ -1,0 +1,29 @@
+mcp:
+  transport: sse
+
+serviceAccount:
+  create: true
+  name: "kubernetes-mcp-sa"
+
+rbac:
+  create: true
+  clusterRole: true 
+
+service:
+  type: ClusterIP
+  port: 80
+
+resources:
+  limits:
+    cpu: 200m
+    memory: 256Mi
+  requests:
+    cpu: 50m
+    memory: 64Mi
+
+ingress:
+  enabled: false
+
+metrics:
+  serviceMonitor:
+    enabled: true

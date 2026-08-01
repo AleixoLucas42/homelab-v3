@@ -1,0 +1,36 @@
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: vault-backup
+  namespace: hashicorp-vault
+spec:
+  schedule: "0 3 * * *"
+  concurrencyPolicy: Forbid
+  startingDeadlineSeconds: 300
+  successfulJobsHistoryLimit: 2
+  failedJobsHistoryLimit: 1
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          restartPolicy: OnFailure
+          containers:
+            - name: vault-backup
+              image: aleixolucas/hashicorpvault-backup:latest
+              imagePullPolicy: IfNotPresent
+              env:
+                - name: VAULT_SLEEP_SECONDS
+                  value: "3"
+                - name: VAULT_BACKUP_FILE
+                  value: "/app/backups/vault-backup.json"
+              envFrom:
+                - secretRef:
+                    name: vault-backup-sec
+              volumeMounts:
+                - name: backup-storage
+                  mountPath: /app/backups
+          volumes:
+            - name: backup-storage
+              hostPath:
+                path: /mnt/vault-backups
+                type: DirectoryOrCreate

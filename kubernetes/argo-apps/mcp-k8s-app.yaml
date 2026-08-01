@@ -1,0 +1,31 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: kubernetes-mcp
+  namespace: argocd
+spec:
+  project: internal-lab
+
+  sources:
+    - repoURL: 'ghcr.io/containers/charts'
+      targetRevision: 0.1.0
+      chart: kubernetes-mcp-server
+      helm:
+        releaseName: kubernetes-mcp
+        valueFiles:
+          - $values/kubernetes/gitops/mcp-kubernetes/values.yaml
+
+    - repoURL: git@github.com:AleixoLucas42/homelab-v3.git
+      targetRevision: main
+      ref: values
+
+  destination:
+    name: in-cluster
+    namespace: mcp-servers
+
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true

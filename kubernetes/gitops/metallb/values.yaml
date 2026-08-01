@@ -1,0 +1,33 @@
+# 1. Bloco Prometheus para o MetalLB (Pai)
+prometheus:
+  serviceMonitor:
+    enabled: false
+  prometheusRule:
+    enabled: false
+
+# 2. Bloco Prometheus replicado para o frr-k8s (Subchart) - Isso resolve o Nil Pointer!
+frr-k8s:
+  prometheus:
+    serviceMonitor:
+      enabled: false
+    prometheusRule:
+      enabled: false
+
+# Suas configurações de recursos originais
+controller:
+  resources:
+    requests:
+      cpu: 100m
+      memory: 128Mi
+    limits:
+      cpu: 200m
+      memory: 384Mi
+
+speaker:
+  resources:
+    requests:
+      cpu: 50m
+      memory: 50Mi
+    limits:
+      cpu: 100m
+      memory: 100Mi

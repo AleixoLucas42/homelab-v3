@@ -1,0 +1,31 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: n8n
+  namespace: argocd
+spec:
+  project: internal-lab
+
+  sources:
+    - repoURL: '8gears.container-registry.com/library'
+      chart: n8n
+      targetRevision: 0.23.0
+      helm:
+        releaseName: n8n
+        valueFiles:
+          - $values/kubernetes/gitops/n8n/values.yaml
+
+    - repoURL: git@github.com:AleixoLucas42/homelab-v3.git
+      targetRevision: main
+      ref: values
+
+  destination:
+    name: in-cluster
+    namespace: n8n
+
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true

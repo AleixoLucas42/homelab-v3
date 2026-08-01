@@ -1,0 +1,29 @@
+# Instala os Custom Resource Definitions (CRDs) do cert-manager automaticamente
+installCRDs: true
+
+# Ajustes de recursos para rodar leve no homelab
+resources:
+  limits:
+    cpu: 100m
+    memory: 128Mi
+  requests:
+    cpu: 10m
+    memory: 64Mi
+
+webhook:
+  resources:
+    limits:
+      cpu: 100m
+      memory: 128Mi
+    requests:
+      cpu: 10m
+      memory: 64Mi
+
+cainjector:
+  resources:
+    limits:
+      cpu: 100m
+      memory: 128Mi
+    requests:
+      cpu: 10m
+      memory: 64Mi

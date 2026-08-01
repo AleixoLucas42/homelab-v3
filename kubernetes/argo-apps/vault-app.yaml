@@ -1,0 +1,33 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: vault
+  namespace: argocd
+spec:
+  project: internal-lab
+
+  sources:
+    # 1. Chart Helm Oficial do HashiCorp Vault
+    - repoURL: https://helm.releases.hashicorp.com
+      chart: vault
+      targetRevision: 0.28.0 # Versão super estável e recente (pode atualizar se quiser)
+      helm:
+        releaseName: vault
+        valueFiles:
+          - $values/kubernetes/gitops/vault/values.yaml
+
+    # 2. Referência do Git para o values.yaml ($values)
+    - repoURL: git@github.com:AleixoLucas42/homelab-v3.git
+      targetRevision: main
+      ref: values
+
+  destination:
+    name: in-cluster
+    namespace: hashicorp-vault
+
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true

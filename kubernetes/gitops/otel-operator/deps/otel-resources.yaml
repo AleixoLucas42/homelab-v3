@@ -1,0 +1,64 @@
+apiVersion: opentelemetry.io/v1beta1
+kind: OpenTelemetryCollector
+metadata:
+  name: otel-collector
+  namespace: opentelemetry-operator
+spec:
+  mode: daemonset
+  config:
+    receivers:
+      otlp:
+        protocols:
+          grpc:
+            endpoint: 0.0.0.0:4317
+          http:
+            endpoint: 0.0.0.0:4318
+    processors:
+      memory_limiter:
+        check_interval: 1s
+        limit_percentage: 75
+        spike_limit_percentage: 15
+      batch:
+        send_batch_size: 8192
+        timeout: 5s
+        send_batch_max_size: 10240
+    exporters:
+      otlp/tempo:
+        endpoint: "tempo.monitoring.svc.cluster.local:4317"
+        tls:
+          insecure: true
+      debug:
+        verbosity: basic
+    service:
+      pipelines:
+        traces:
+          receivers: [otlp]
+          processors: [memory_limiter, batch]
+          exporters: [otlp/tempo, debug]
+
+---
+apiVersion: opentelemetry.io/v1alpha1
+kind: Instrumentation
+metadata:
+  name: homelab-auto-instrumentation
+  namespace: opentelemetry-operator
+spec:
+  exporter:
+    endpoint: http://otel-collector-collector.opentelemetry-operator.svc.cluster.local:4318
+  env:
+    - name: OTEL_EXPORTER_OTLP_PROTOCOL
+      value: http/protobuf
+  propagators:
+    - tracecontext
+    - baggage
+    - b3
+  sampler:
+    type: parentbased_always_on
+  java:
+    image: ghcr.io/open-telemetry/opentelemetry-operator/autoinstrumentation-java:latest
+  nodejs:
+    image: ghcr.io/open-telemetry/opentelemetry-operator/autoinstrumentation-nodejs:latest
+  python:
+    image: ghcr.io/open-telemetry/opentelemetry-operator/autoinstrumentation-python:latest
+  go:
+    image: ghcr.io/open-telemetry/opentelemetry-operator/autoinstrumentation-go:latest

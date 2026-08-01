@@ -1,0 +1,12 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: proxmox-svc
+  namespace: proxmox-ssl
+  annotations:
+    traefik.ingress.kubernetes.io/service.serverstransport: proxmox-ssl-skip-tls-proxmox@kubernetescrd
+spec:
+  type: ClusterIP
+  ports:
+  - port: 443
+    protocol: TCP

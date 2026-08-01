@@ -1,0 +1,23 @@
+apiVersion: traefik.io/v1alpha1
+kind: Middleware
+metadata:
+  name: crowdsec-bouncer
+  namespace: traefik-gateway
+spec:
+  plugin:
+    bouncer:
+      enabled: true
+      crowdsecMode: stream
+      crowdsecLapiScheme: http
+      crowdsecLapiHost: crowdsec-service.crowdsec.svc.cluster.local:8080
+      crowdsecLapiPath: /
+      crowdsecLapiKeyFile: /etc/traefik/crowdsec/BOUNCER_KEY_traefik
+      forwardedHeadersTrustedIps:
+        - "10.11.51.2/32"
+        - "10.11.50.0/24"
+      crowdsecAppsecEnabled: true
+      crowdsecAppsecHost: crowdsec-appsec-service.crowdsec.svc.cluster.local:7422
+      crowdsecAppsecPath: /
+      crowdsecAppsecFailureBlock: true
+      crowdsecAppsecUnreachableBlock: true
+      crowdsecAppsecBodyLimit: 10485760

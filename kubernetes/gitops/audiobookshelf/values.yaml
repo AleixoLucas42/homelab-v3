@@ -1,0 +1,33 @@
+service:
+  main:
+    ports:
+      http:
+        port: 80
+
+persistence:
+  config:
+    enabled: true
+    storageClass: "local-path"
+    accessMode: ReadWriteOnce
+    size: 1Gi
+
+  metadata:
+    enabled: true
+    storageClass: "local-path"
+    accessMode: ReadWriteOnce
+    size: 1Gi
+
+  audiobooks:
+    enabled: true
+    storageClass: "local-path"
+    accessMode: ReadWriteOnce
+    size: 1Gi
+    mountPath: /audiobooks
+
+resources:
+  requests:
+    memory: "50Mi"
+    cpu: "10m"
+  limits:
+    memory: "256Mi"
+    cpu: "250m"

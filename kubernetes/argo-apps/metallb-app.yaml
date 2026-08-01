@@ -1,0 +1,38 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: metallb
+  namespace: argocd
+spec:
+  project: internal-lab
+
+  sources:
+    # 1. Chart Helm Oficial do MetalLB
+    - repoURL: https://metallb.github.io/metallb
+      chart: metallb
+      targetRevision: 0.16.0
+      helm:
+        releaseName: metallb
+        valueFiles:
+          - $values/kubernetes/gitops/metallb/values.yaml
+
+    # 2. Referência do Git para o values.yaml ($values)
+    - repoURL: git@github.com:AleixoLucas42/homelab-v3.git
+      targetRevision: main
+      ref: values
+
+    # 3. Manifestos extras (Pool de IPs e L2Advertisement)
+    - repoURL: git@github.com:AleixoLucas42/homelab-v3.git
+      targetRevision: main
+      path: kubernetes/gitops/metallb/deps/
+
+  destination:
+    name: in-cluster
+    namespace: metallb-system
+
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true

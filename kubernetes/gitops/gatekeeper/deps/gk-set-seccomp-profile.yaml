@@ -1,0 +1,24 @@
+# apiVersion: mutations.gatekeeper.sh/v1
+# kind: Assign
+# metadata:
+#   name: gk-set-seccomp-profile-deployment
+# spec:
+#   applyTo:
+#   - groups: ["apps"]
+#     kinds: ["Deployment"]
+#     versions: ["v1"]
+#   match:
+#     scope: Namespaced
+#     kinds:
+#     - apiGroups: ["*"]
+#       kinds: ["Deployment"]
+#     namespaces: []
+#   location: "spec.template.spec.securityContext.seccompProfile"
+#   parameters:
+#     pathTests:
+#     - subPath: "spec.template.spec.securityContext.seccompProfile"
+#       condition: MustNotExist
+#     assign:
+#       value: 
+#         type: RuntimeDefault
+

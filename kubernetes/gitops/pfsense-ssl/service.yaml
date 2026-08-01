@@ -1,0 +1,12 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: pfsense-svc
+  namespace: pfsense-ssl
+  annotations:
+    traefik.ingress.kubernetes.io/service.serverstransport: pfsense-ssl-skip-tls-pfsense@kubernetescrd
+spec:
+  type: ClusterIP
+  ports:
+  - port: 443
+    protocol: TCP

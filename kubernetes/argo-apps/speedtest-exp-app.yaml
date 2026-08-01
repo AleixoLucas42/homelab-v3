@@ -1,0 +1,33 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: speedtest-exporter
+  namespace: argocd
+spec:
+  project: internal-lab
+
+  sources:
+    # 1. Chart Helm do desenvolvedor wrenix (distribuído via OCI)
+    - repoURL: codeberg.org/wrenix/helm-charts # Sem https:// ou oci://
+      chart: speedtest-exporter
+      targetRevision: 0.2.2 # A versão exata do link que você mandou
+      helm:
+        releaseName: speedtest-exporter
+        valueFiles:
+          - $values/kubernetes/gitops/speedtest-exporter/values.yaml
+
+    # 2. Referência do Git para o values.yaml ($values)
+    - repoURL: git@github.com:AleixoLucas42/homelab-v3.git
+      targetRevision: main
+      ref: values
+
+  destination:
+    name: in-cluster
+    namespace: speedtest-exporter
+
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true

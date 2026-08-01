@@ -1,0 +1,33 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: local-path-provisioner
+  namespace: argocd
+spec:
+  project: internal-lab
+
+  sources:
+    # 1. Puxa o Chart direto do repositório Git Oficial da Rancher
+    - repoURL: 'https://github.com/rancher/local-path-provisioner.git'
+      targetRevision: v0.0.30 # A tag do release do projeto
+      path: deploy/chart/local-path-provisioner # O caminho exato de onde o chart mora dentro do Git deles
+      helm:
+        releaseName: local-path-provisioner
+        valueFiles:
+          - $values/kubernetes/gitops/local-path-provisioner/values.yaml
+
+    # 2. Referência do seu Git privado para injetar as suas configurações do values ($values)
+    - repoURL: git@github.com:AleixoLucas42/homelab-v3.git
+      targetRevision: main
+      ref: values
+
+  destination:
+    name: in-cluster
+    namespace: local-path-storage
+
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true

@@ -1,0 +1,38 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: traefik
+  namespace: argocd
+spec:
+  project: internal-lab
+
+  sources:
+    # 1. Chart Helm Oficial do Traefik
+    - repoURL: https://traefik.github.io/charts
+      chart: traefik
+      targetRevision: 40.2.0
+      helm:
+        releaseName: traefik
+        valueFiles:
+          - $values/kubernetes/gitops/traefik/values.yaml
+
+    # 2. Referência do Git para o values.yaml ($values)
+    - repoURL: git@github.com:AleixoLucas42/homelab-v3.git
+      targetRevision: main
+      ref: values
+
+    # 3. Manifestos extras no repositório Git (NOVO)
+    - repoURL: git@github.com:AleixoLucas42/homelab-v3.git
+      targetRevision: main
+      path: kubernetes/gitops/traefik/deps/
+
+  destination:
+    name: in-cluster
+    namespace: traefik-gateway
+
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true

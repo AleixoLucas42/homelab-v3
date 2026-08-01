@@ -1,0 +1,88 @@
+replicas: "1"
+deploymentStrategy:
+  type: Recreate
+env:
+  TZ: "America/Sao_Paulo"
+
+image:
+  tag: 13.1.1
+
+revisionHistoryLimit: 0
+envFromSecret: "grafana-sec"
+
+resources:
+  requests:
+    cpu: "90m"
+    memory: "384Mi"
+  limits:
+    cpu: "400m"
+    memory: "768Mi"
+
+containerSecurityContext:
+  capabilities:
+    drop:
+      - ALL
+
+# desativar o pvc agora que usa mysql? verificar isso Lucas do futuro.
+persistence:
+  enabled: true
+  storageClassName: "local-path"
+  accessModes:
+    - ReadWriteOnce
+  size: 4Gi
+
+grafana.ini:
+  server:
+    domain: "aleixolab.ddns.net"
+  users:
+    allow_sign_up: false
+  auth.ldap:
+    enabled: true
+    config_file: /etc/grafana/ldap.toml
+    allow_sign_up: true
+
+ldap:
+  enabled: true
+  config: |-
+    [[servers]]
+    host = "10.11.50.3"
+    port = 389
+    use_ssl = false
+    start_tls = false
+    tls_ciphers = []
+    min_tls_version = ""
+    ssl_skip_verify = false
+    
+    bind_dn = "${LDAP_BIND_DN}"
+    bind_password = """${LDAP_BIND_PASSWORD}"""
+    
+    timeout = 10
+
+    search_filter = "(sAMAccountName=%s)"
+    search_base_dns = ["dc=aleixohome,dc=lan"]
+
+    [servers.attributes]
+    name = "givenName"
+    surname = "sn"
+    username = "sAMAccountName"
+    member_of = "memberOf"
+    email =  "userPrincipalName"
+
+    [[servers.group_mappings]]
+    group_dn = "CN=gp_aleixohome,CN=Groups,DC=aleixohome,DC=lan"
+    org_role = "Admin"
+
+    [[servers.group_mappings]]
+    group_dn = "CN=gp_aleixohome,CN=Groups,DC=aleixohome,DC=lan"
+    org_role = "Editor"
+
+    [[servers.group_mappings]]
+    group_dn = "*"
+    org_role = "Viewer"
+
+ingress:
+  enabled: false
+
+service:
+  enabled: true
+  port: 80

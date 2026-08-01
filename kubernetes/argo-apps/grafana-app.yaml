@@ -1,0 +1,33 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: grafana
+  namespace: argocd
+spec:
+  project: internal-lab
+
+  sources:
+    # 1. Puxa o Chart Oficial do Grafana
+    - repoURL: 'https://grafana.github.io/helm-charts'
+      targetRevision: 8.2.2 # Versão do Chart
+      chart: grafana
+      helm:
+        releaseName: grafana
+        valueFiles:
+          - $values/kubernetes/gitops/grafana/values.yaml
+
+    # 2. Injeta o seu repositório Git com as configurações
+    - repoURL: 'git@github.com:AleixoLucas42/homelab-v3.git'
+      targetRevision: main
+      ref: values
+
+  destination:
+    name: in-cluster
+    namespace: grafana
+
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true

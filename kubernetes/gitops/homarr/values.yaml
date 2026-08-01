@@ -1,0 +1,27 @@
+resources:
+  requests:
+    cpu: 200m
+    memory: 384Mi
+  limits:
+    cpu: 500m
+    memory: 768Mi
+
+envSecrets:
+  dbEncryption:
+    existingSecret: homarr-sec
+
+livenessProbe:
+  initialDelaySeconds: 20
+  periodSeconds: 30
+  timeoutSeconds: 5
+
+readinessProbe:
+  initialDelaySeconds: 20
+  periodSeconds: 30
+  timeoutSeconds: 5
+
+persistence:
+  homarrDatabase:
+    enabled: true
+    size: "1Gi"
+    storageClassName: "local-path"

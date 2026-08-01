@@ -1,0 +1,22 @@
+tempo:
+  receivers:
+    otlp:
+      protocols:
+        grpc:
+          endpoint: "0.0.0.0:4317"
+        http:
+          endpoint: "0.0.0.0:4318"
+  metricsGenerator:
+    enabled: true
+compactor:
+  compaction:
+    block_retention: 24h
+
+persistence:
+  enabled: true
+  storageClass: "host-path"
+  size: "2Gi"
+
+gateway:
+  enabled: false
+

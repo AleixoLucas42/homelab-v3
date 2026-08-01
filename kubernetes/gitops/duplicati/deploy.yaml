@@ -1,0 +1,53 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: duplicati
+  namespace: duplicati
+  labels:
+    app: duplicati
+spec:
+  replicas: 1
+  strategy:
+    type: Recreate
+  selector:
+    matchLabels:
+      app: duplicati
+  template:
+    metadata:
+      labels:
+        app: duplicati
+    spec:
+      containers:
+        - name: duplicati
+          image: duplicati/duplicati:2.3.0.4-stable
+          imagePullPolicy: IfNotPresent
+          env:
+            - name: TZ
+              value: "America/Sao_Paulo"
+          envFrom:
+            - secretRef:
+                name: duplicati-sec
+          resources:
+            requests:
+              cpu: "10m"
+              memory: "164Mi"
+            limits:
+              cpu: "50m"
+              memory: "256Mi"
+          ports:
+            - containerPort: 8200
+              name: webui
+          volumeMounts:
+            - name: config
+              mountPath: /data
+            - name: source-data
+              mountPath: /source
+              readOnly: true
+      volumes:
+        - name: config
+          persistentVolumeClaim:
+            claimName: duplicati-config
+        - name: source-data
+          hostPath:
+            path: /mnt
+            type: Directory

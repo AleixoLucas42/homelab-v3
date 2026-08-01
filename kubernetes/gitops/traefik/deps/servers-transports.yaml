@@ -1,0 +1,23 @@
+apiVersion: traefik.io/v1alpha1
+kind: ServersTransport
+metadata:
+  name: skip-tls-proxmox
+  namespace: proxmox-ssl
+spec:
+  insecureSkipVerify: true
+---
+apiVersion: traefik.io/v1alpha1
+kind: ServersTransport
+metadata:
+  name: skip-tls-pfsense
+  namespace: pfsense-ssl
+spec:
+  insecureSkipVerify: true
+---
+apiVersion: traefik.io/v1alpha1
+kind: ServersTransport
+metadata:
+  name: skip-tls-wazuh
+  namespace: wazuh-ssl
+spec:
+  insecureSkipVerify: true

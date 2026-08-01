@@ -1,0 +1,37 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: pve-exporter
+  namespace: pve-exporter
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: pve-exporter
+  template:
+    metadata:
+      labels:
+        app: pve-exporter
+    spec:
+      containers:
+        - name: pve-exporter
+          image: prompve/prometheus-pve-exporter
+          env:
+            - name: TZ
+              value: America/Sao_Paulo
+            - name:  PVE_VERIFY_SSL
+              value: "false"
+          envFrom:
+            - secretRef:
+                name: pve-exporter-sec
+          resources:
+            requests:
+              cpu: "10m"
+              memory: "50Mi"
+            limits:
+              cpu: "100m"
+              memory: "94Mi"
+          securityContext:
+            capabilities:
+              drop:
+                - ALL

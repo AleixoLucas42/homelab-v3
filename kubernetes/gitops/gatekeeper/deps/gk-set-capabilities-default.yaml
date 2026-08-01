@@ -1,0 +1,39 @@
+apiVersion: mutations.gatekeeper.sh/v1
+kind: ModifySet
+metadata:
+  name: gk-add-capabilities-default
+spec:
+  applyTo:
+  - groups: ["apps"]
+    kinds: ["Deployment"]
+    versions: ["v1"]
+  match:
+    namespaces: ["adguard","adguard-exporter","audiobookshelf","blackbox-exporter","cardsgo","default","discord2whatsapp-stack","duplicati-prom-exporter","frigate","grafana","grafana2whatsapp","m5-stick-proxmox-metrics","minecraft","n8n","prometheus","pve-exporter","speedtest-exporter","traefik-gateway"]
+    scope: Namespaced
+  location: "spec.template.spec.containers[name:*].securityContext.capabilities.add"
+  parameters:
+    pathTests:
+    - subPath: "spec.template.spec.containers[name:*].securityContext.capabilities.add"
+      condition: MustNotExist
+    operation: merge
+    values:
+      fromList: ["NET_BIND_SERVICE","CHOWN","SETUID","SETGID", "FOWNER"]
+---
+apiVersion: mutations.gatekeeper.sh/v1
+kind: ModifySet
+metadata:
+  name: gk-drop-capabilities-default
+spec:
+  applyTo:
+  - groups: ["apps"]
+    kinds: ["Deployment"]
+    versions: ["v1"]
+  match:
+    namespaces: ["adguard","adguard-exporter","audiobookshelf","blackbox-exporter","cardsgo","default","discord2whatsapp-stack","duplicati-prom-exporter","frigate","grafana","grafana2whatsapp","m5-stick-proxmox-metrics","minecraft","n8n","prometheus","pve-exporter","speedtest-exporter","traefik-gateway"]
+    scope: Namespaced
+  location: "spec.template.spec.containers[name:*].securityContext.capabilities.drop"
+  parameters:
+    operation: merge
+    values:
+      fromList: ["ALL"]
+

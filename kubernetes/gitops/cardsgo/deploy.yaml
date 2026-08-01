@@ -1,0 +1,40 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: cardsgo
+  namespace: cardsgo
+spec:
+  replicas: 1
+  revisionHistoryLimit: 0
+  selector:
+    matchLabels:
+      app: cardsgo
+  template:
+    metadata:
+      annotations:
+        instrumentation.opentelemetry.io/inject-python: "opentelemetry-operator/homelab-auto-instrumentation"
+        instrumentation.opentelemetry.io/env.OTEL_TRACES_EXPORTER: "console,otlp"
+        instrumentation.opentelemetry.io/env.OTEL_EXPORTER_OTLP_PROTOCOL: "http/protobuf"
+      labels:
+        app: cardsgo
+    spec:
+      containers:
+        - name: cardsgo
+          image: aleixolucas/cardsgo:p311
+          env:
+            - name: TZ
+              value: America/Sao_Paulo
+          envFrom:
+            - secretRef:
+                name: cardsgo-sec
+          resources:
+            requests:
+              cpu: "10m"
+              memory: "64Mi"
+            limits:
+              cpu: "50m"
+              memory: "128Mi"
+          securityContext:
+            capabilities:
+              drop:
+                - ALL

@@ -1,0 +1,31 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: audiobookshelf # <--- Corrigido o typo
+  namespace: argocd
+spec:
+  project: internal-lab
+
+  sources:
+    - repoURL: 'https://k8s-home-lab.github.io/helm-charts/' # <--- URL correta do repositório
+      targetRevision: 2.0.1 # <--- Versão mais recente do chart no ArtifactHub
+      chart: audiobookshelf # <--- Repositórios Helm exigem 'chart', e não 'path'
+      helm:
+        releaseName: audiobookshelf
+        valueFiles:
+          - $values/kubernetes/gitops/audiobookshelf/values.yaml
+
+    - repoURL: 'git@github.com:AleixoLucas42/homelab-v3.git'
+      targetRevision: main
+      ref: values
+
+  destination:
+    name: in-cluster
+    namespace: audiobookshelf
+
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true
