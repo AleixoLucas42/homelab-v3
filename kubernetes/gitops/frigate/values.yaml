@@ -97,5 +97,5 @@ persistence:
     storageClass: "local-path"
   media:
     enabled: true
-    size: "30Gi"
+    size: "60Gi"
     storageClass: "local-path"
