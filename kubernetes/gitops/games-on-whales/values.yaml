@@ -7,15 +7,27 @@ firefox:
 
 retroarch:
   enabled: true
-
-graphic_resources:
-  nvidia.com/gpu: 1
-
+  resources:
+    limits:
+      nvidia.com/gpu: "0"  # Sem GPU dedicada aqui se o Xorg/Sunshine já compartilham o contexto via variáveis de ambiente
+    requests:
+      nvidia.com/gpu: "0"
 xorg:
   resolution: "1920x1080"
   refreshrate: 60
+  resources:
+    limits:
+      nvidia.com/gpu: "0"
+    requests:
+      nvidia.com/gpu: "0"
 
 sunshine:
+  enabled: true
+  resources:
+    limits:
+      nvidia.com/gpu: "1"
+    requests:
+      nvidia.com/gpu: "1"
   user: ""
   password: ""
   logLevel: "info"
