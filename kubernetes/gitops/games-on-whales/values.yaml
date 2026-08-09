@@ -15,7 +15,8 @@ retroarch:
   volumeMounts:
     - name: roms
       mountPath: /home/retro/ROMs
-
+    - name: config
+      mountPath: /config
 xorg:
   resolution: "1920x1080"
   refreshrate: 60
