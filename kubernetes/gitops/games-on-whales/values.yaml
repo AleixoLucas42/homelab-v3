@@ -36,14 +36,14 @@ persistence:
     enabled: true
     type: pvc
     accessMode: ReadWriteOnce
-    size: 5Gi
+    size: 3Gi
     storageClass: "local-path"
   
   roms:
     enabled: true
     type: pvc
     accessMode: ReadWriteOnce
-    size: 30Gi 
+    size: 20Gi 
     mountPath: /home/retro/ROMs
     storageClass: "local-path"
 
