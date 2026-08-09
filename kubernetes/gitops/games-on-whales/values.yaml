@@ -10,7 +10,7 @@ retroarch:
 
 graphic_resources:
   limits:
-    nvidia.com/gpu: 1
+    nvidia.com/gpu: "1"
 
 xorg:
   resolution: "1920x1080"
