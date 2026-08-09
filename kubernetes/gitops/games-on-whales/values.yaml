@@ -1,15 +1,13 @@
-
 steam:
   enabled: false
 firefox:
   enabled: false
 
-
 retroarch:
   enabled: true
   resources:
     limits:
-      nvidia.com/gpu: "0"  # Sem GPU dedicada aqui se o Xorg/Sunshine já compartilham o contexto via variáveis de ambiente
+      nvidia.com/gpu: "0"
     requests:
       nvidia.com/gpu: "0"
   volumeMounts:
@@ -48,6 +46,13 @@ sunshine:
           key: password
 
 persistence:
+  home:
+    enabled: true
+    type: pvc
+    accessMode: ReadWriteOnce
+    size: 2Gi
+    storageClass: "local-path"
+
   config:
     enabled: true
     type: pvc
