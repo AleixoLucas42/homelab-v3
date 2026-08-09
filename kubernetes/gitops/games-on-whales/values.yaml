@@ -14,7 +14,7 @@ graphic_resources:
 
 xorg:
   resolution: "1920x1080"
-  refreshrate: 60
+  refreshrate: "60"
 
 sunshine:
   user: ""
