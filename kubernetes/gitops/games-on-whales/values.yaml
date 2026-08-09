@@ -12,6 +12,10 @@ retroarch:
       nvidia.com/gpu: "0"  # Sem GPU dedicada aqui se o Xorg/Sunshine já compartilham o contexto via variáveis de ambiente
     requests:
       nvidia.com/gpu: "0"
+  volumeMounts:
+    - name: roms
+      mountPath: /home/retro/ROMs
+
 xorg:
   resolution: "1920x1080"
   refreshrate: 60
