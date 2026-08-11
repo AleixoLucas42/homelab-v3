@@ -7,8 +7,12 @@ retroarch:
   enabled: true
   resources:
     limits:
+      cpu: "2"
+      memory: "768Mi"
       nvidia.com/gpu: "0"
     requests:
+      cpu: "200m"
+      memory: "256Mi"
       nvidia.com/gpu: "0"
   volumeMounts:
     - name: roms
@@ -19,16 +23,24 @@ xorg:
   refreshrate: 60
   resources:
     limits:
+      cpu: "2"
+      memory: "768Mi"
       nvidia.com/gpu: "0"
     requests:
+      cpu: "200m"
+      memory: "256Mi"
       nvidia.com/gpu: "0"
 
 sunshine:
   enabled: true
   resources:
     limits:
+      cpu: "2"
+      memory: "768Mi"
       nvidia.com/gpu: "1"
     requests:
+      cpu: "200m"
+      memory: "256Mi"
       nvidia.com/gpu: "1"
   user: ""
   password: ""
