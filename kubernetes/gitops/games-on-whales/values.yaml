@@ -7,7 +7,7 @@ retroarch:
   enabled: true
   resources:
     limits:
-      cpu: "2"
+      cpu: "300"
       memory: "768Mi"
       nvidia.com/gpu: "0"
     requests:
@@ -23,7 +23,7 @@ xorg:
   refreshrate: 60
   resources:
     limits:
-      cpu: "2"
+      cpu: "300"
       memory: "768Mi"
       nvidia.com/gpu: "0"
     requests:
@@ -35,11 +35,11 @@ sunshine:
   enabled: true
   resources:
     limits:
-      cpu: "2"
+      cpu: "200"
       memory: "768Mi"
       nvidia.com/gpu: "1"
     requests:
-      cpu: "200m"
+      cpu: "100m"
       memory: "256Mi"
       nvidia.com/gpu: "1"
   user: ""
