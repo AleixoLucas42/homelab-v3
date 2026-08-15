@@ -1,3 +1,6 @@
+controller:
+  replicas: 0
+
 steam:
   enabled: false
 firefox:
