@@ -200,6 +200,12 @@ ports:
       default: true
     exposedPort: 1050
     protocol: TCP
+  sonarr:
+    port: 1060
+    expose:
+      default: true
+    exposedPort: 1060
+    protocol: TCP
 
 gateway:
   enabled: true
@@ -361,6 +367,13 @@ gateway:
         - name: aleixolab-tls
     radarr:
       port: 1050
+      protocol: HTTPS
+      namespacePolicy:
+        from: All
+      certificateRefs:
+        - name: aleixolab-tls
+    sonarr:
+      port: 1060
       protocol: HTTPS
       namespacePolicy:
         from: All
