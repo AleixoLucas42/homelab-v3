@@ -412,6 +412,14 @@ spec:
     - path:
         type: PathPrefix
         value: /
+    filters:
+    - type: RequestHeaderModifier
+      requestHeaderModifier:
+        set:
+        - name: X-Forwarded-Host
+          value: aleixolab.ddns.net:1030
+        - name: X-Forwarded-Proto
+          value: https
     backendRefs:
     - name: qbittorrent
       port: 8080
