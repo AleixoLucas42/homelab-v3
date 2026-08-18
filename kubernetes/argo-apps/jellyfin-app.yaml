@@ -7,7 +7,7 @@ spec:
   project: internal-lab
   sources:
     - repoURL: 'https://jellyfin.github.io/jellyfin-helm'
-      targetRevision: main
+      targetRevision: 3.2.0
       chart: jellyfin
       helm:
         releaseName: jellyfin
