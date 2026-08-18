@@ -3,6 +3,8 @@ env:
   PUID: "1000"
   PGID: "1000"
   COMPlus_EnableDiagnostics: "0"
+  SENTRY_DSN: ""
+  SENTRY_ENABLED: "false"
 
 persistence:
   config:
