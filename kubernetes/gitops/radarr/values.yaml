@@ -1,0 +1,23 @@
+env:
+  TZ: America/Sao_Paulo
+  PUID: "1000"
+  PGID: "1000"
+
+podSecurityContext:
+  runAsUser: 1000
+  runAsGroup: 1000
+  fsGroup: 1000
+  fsGroupChangePolicy: "OnRootMismatch"
+
+persistence:
+  config:
+    enabled: true
+    type: hostPath
+    hostPath: /mnt/data/config/radarr
+    mountPath: /config
+  
+  media:
+    enabled: true
+    type: hostPath
+    hostPath: /mnt/data
+    mountPath: /data

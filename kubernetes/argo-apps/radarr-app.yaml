@@ -1,0 +1,29 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: radarr
+  namespace: argocd
+spec:
+  project: internal-lab
+  sources:
+    - repoURL: 'https://k8s-home-lab.github.io/helm-charts/'
+      targetRevision: 17.6.1
+      chart: radarr
+      helm:
+        releaseName: radarr
+        valueFiles:
+          - $values/kubernetes/gitops/radarr/values.yaml
+
+    - repoURL: 'git@github.com:AleixoLucas42/homelab-v3.git'
+      targetRevision: main
+      ref: values
+
+  destination:
+    name: in-cluster
+    namespace: radarr
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true
