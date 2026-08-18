@@ -508,3 +508,26 @@ spec:
     - name: bazarr
       port: 6767
 ---
+apiVersion: gateway.networking.k8s.io/v1
+kind: HTTPRoute
+metadata:
+  name: jellyseerr-route
+  namespace: jellyseerr
+spec:
+  hostnames:
+  - "aleixolab.ddns.net" 
+  parentRefs:
+  - group: gateway.networking.k8s.io
+    kind: Gateway
+    name: traefik-gateway
+    namespace: traefik-gateway
+    sectionName: jellyseerr
+  rules:
+  - matches:
+    - path:
+        type: PathPrefix
+        value: /
+    backendRefs:
+    - name: jellyseerr
+      port: 5055
+---
