@@ -1,0 +1,30 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: qbittorrent
+  namespace: argocd
+spec:
+  project: internal-lab
+  sources:
+    - repoURL: 'ghcr.io/gabe565/charts' 
+      targetRevision: 0.4.1
+      chart: qbittorrent
+      helm:
+        releaseName: qbittorrent
+        valueFiles:
+          - $values/kubernetes/gitops/qbittorrent/values.yaml
+    
+    - repoURL: 'git@github.com:AleixoLucas42/homelab-v3.git'
+      targetRevision: main
+      ref: values
+
+  destination:
+    name: in-cluster
+    namespace: qbittorrent 
+
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true

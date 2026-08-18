@@ -1,0 +1,39 @@
+image:
+  repository: ghcr.io/linuxserver/qbittorrent
+  pullPolicy: IfNotPresent
+  tag: version-5.0.3-r0 
+
+env:
+  TZ: America/Sao_Paulo
+  PUID: "1000"
+  PGID: "1000"
+  WEBUI_PORT: "8080"
+
+service:
+  main:
+    ports:
+      http:
+        port: 8080
+  bittorrent:
+    enabled: true
+    ports:
+      bittorrent:
+        enabled: true
+        port: 6881
+        protocol: TCP
+
+persistence:
+  config:
+    enabled: true
+    type: hostPath
+    hostPath: /mnt/data/config/qbittorrent
+    mountPath: /config
+
+  media:
+    enabled: true
+    type: hostPath
+    hostPath: /mnt/data
+    mountPath: /data
+    
+  downloads:
+    enabled: false
