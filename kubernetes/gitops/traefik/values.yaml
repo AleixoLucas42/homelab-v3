@@ -222,7 +222,7 @@ ports:
     port: 1090
     expose:
       default: true
-    exposedPort: 1080
+    exposedPort: 1090
     protocol: TCP
 
 gateway:
