@@ -2,19 +2,7 @@ env:
   TZ: America/Sao_Paulo
   PUID: "1000"
   PGID: "1000"
-  # Adicione esta linha para desativar o subsistema do Sentry e evitar o erro de acesso:
   COMPlus_EnableDiagnostics: "0"
-
-securityContext:
-  runAsUser: 1000
-  runAsGroup: 1000
-  readOnlyRootFilesystem: false
-  allowPrivilegeEscalation: false
-
-podSecurityContext:
-  runAsUser: 1000
-  runAsGroup: 1000
-  fsGroup: 1000
 
 persistence:
   config:
@@ -27,3 +15,9 @@ persistence:
     type: hostPath
     hostPath: /mnt/data
     mountPath: /data
+
+podSecurityContext:
+  runAsUser: 1000
+  runAsGroup: 1000
+  fsGroup: 1000
+  fsGroupChangePolicy: "OnRootMismatch"
