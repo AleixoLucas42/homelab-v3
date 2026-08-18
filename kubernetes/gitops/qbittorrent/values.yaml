@@ -8,6 +8,7 @@ env:
   PUID: "1000"
   PGID: "1000"
   WEBUI_PORT: "8080"
+  UMASK: "002"
 
 service:
   main:
