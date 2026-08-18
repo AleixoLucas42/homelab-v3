@@ -1,0 +1,9 @@
+env:
+  TZ: America/Sao_Paulo
+  LOG_LEVEL: info
+
+service:
+  main:
+    ports:
+      http:
+        port: 8191
