@@ -3,11 +3,17 @@ env:
   PUID: "1000"
   PGID: "1000"
 
+# Força o securityContext direto no container principal
+securityContext:
+  runAsUser: 1000
+  runAsGroup: 1000
+  readOnlyRootFilesystem: false
+  allowPrivilegeEscalation: false
+
 podSecurityContext:
   runAsUser: 1000
   runAsGroup: 1000
   fsGroup: 1000
-  fsGroupChangePolicy: "OnRootMismatch"
 
 persistence:
   config:
@@ -15,7 +21,6 @@ persistence:
     type: hostPath
     hostPath: /mnt/data/config/radarr
     mountPath: /config
-  
   media:
     enabled: true
     type: hostPath
