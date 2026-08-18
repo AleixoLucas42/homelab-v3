@@ -1,0 +1,29 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: jellyseerr
+  namespace: argocd
+spec:
+  project: internal-lab
+  sources:
+    - repoURL: 'https://rtomik.github.io/helm-charts'
+      targetRevision: 0.0.1
+      chart: jellyseerr
+      helm:
+        releaseName: jellyseerr
+        valueFiles:
+          - $values/kubernetes/gitops/jellyseerr/values.yaml
+
+    - repoURL: 'git@github.com:AleixoLucas42/homelab-v3.git'
+      targetRevision: main
+      ref: values
+
+  destination:
+    name: in-cluster
+    namespace: jellyseerr
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true
