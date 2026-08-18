@@ -14,7 +14,7 @@ service:
   main:
     ports:
       http:
-        port: 8080
+        port: 1030
   bittorrent:
     enabled: true
     ports:
