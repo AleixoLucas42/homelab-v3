@@ -9,13 +9,13 @@ persistence:
   media:
     enabled: false
 
-extraVolumes:
+volumes:
   - name: media-volume
     hostPath:
       path: /mnt/data
       type: DirectoryOrCreate
 
-extraVolumeMounts:
+volumeMounts:
   - name: media-volume
     mountPath: /data
 
