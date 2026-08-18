@@ -1,0 +1,23 @@
+env:
+  TZ: America/Sao_Paulo
+
+persistence:
+  config:
+    enabled: true
+    accessMode: ReadWriteOnce
+    size: 5Gi
+
+extraVolumes:
+  - name: media-volume
+    hostPath:
+      path: /mnt/data
+      type: DirectoryOrCreate
+
+extraVolumeMounts:
+  - name: media-volume
+    mountPath: /data
+
+podSecurityContext:
+  runAsUser: 1000
+  runAsGroup: 1000
+  fsGroup: 1000
