@@ -20,8 +20,10 @@ spec:
 
   destination:
     name: in-cluster
-    namespace: media
+    namespace: flaresolverr
   syncPolicy:
     automated:
       prune: true
       selfHeal: true
+    syncOptions:
+      - CreateNamespace=true
