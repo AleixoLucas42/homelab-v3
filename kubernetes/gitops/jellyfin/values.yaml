@@ -6,6 +6,8 @@ persistence:
     enabled: true
     accessMode: ReadWriteOnce
     size: 5Gi
+  media:
+    enabled: false
 
 extraVolumes:
   - name: media-volume
