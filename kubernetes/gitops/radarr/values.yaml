@@ -23,3 +23,13 @@ podSecurityContext:
   runAsGroup: 1000
   fsGroup: 1000
   fsGroupChangePolicy: "OnRootMismatch"
+
+initContainers:
+  init-permissions:
+    image: busybox:latest
+    command: ['sh', '-c', 'chown -R 1000:1000 /config && chmod -R 775 /config']
+    securityContext:
+      runAsUser: 0
+    volumeMounts:
+      - name: config
+        mountPath: /config
