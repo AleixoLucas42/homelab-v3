@@ -1,0 +1,11 @@
+env:
+  TZ: America/Sao_Paulo
+  PUID: "1000"
+  PGID: "1000"
+
+persistence:
+  config:
+    enabled: true
+    type: hostPath
+    hostPath: /mnt/data/config/prowlarr
+    mountPath: /config

@@ -1,0 +1,31 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: prowlarr
+  namespace: argocd
+spec:
+  project: internal-lab
+
+  sources:
+    - repoURL: 'https://k8s-home-lab.github.io/helm-charts/'
+      targetRevision: 5.4.0
+      chart: prowlarr
+      helm:
+        releaseName: prowlarr
+        valueFiles:
+          - $values/kubernetes/gitops/prowlarr/values.yaml
+    
+    - repoURL: 'git@github.com:AleixoLucas42/homelab-v3.git'
+      targetRevision: main
+      ref: values
+
+  destination:
+    name: in-cluster
+    namespace: prowlarr 
+
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true
