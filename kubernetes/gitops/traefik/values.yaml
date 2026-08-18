@@ -188,6 +188,12 @@ ports:
       default: true
     exposedPort: 1030
     protocol: TCP
+  prowlarr:
+    port: 1040
+    expose:
+      default: true
+    exposedPort: 1040
+    protocol: TCP
 
 gateway:
   enabled: true
@@ -335,6 +341,13 @@ gateway:
         - name: aleixolab-tls
     qbittorrent:
       port: 1030
+      protocol: HTTPS
+      namespacePolicy:
+        from: All
+      certificateRefs:
+        - name: aleixolab-tls
+    prowlarr:
+      port: 1040
       protocol: HTTPS
       namespacePolicy:
         from: All
