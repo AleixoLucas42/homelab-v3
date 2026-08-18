@@ -7,7 +7,7 @@ env:
   TZ: America/Sao_Paulo
   PUID: "1000"
   PGID: "1000"
-  WEBUI_PORT: "8080"
+  WEBUI_PORT: "1030"
   UMASK: "002"
 
 service:
