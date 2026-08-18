@@ -218,6 +218,12 @@ ports:
       default: true
     exposedPort: 1080
     protocol: TCP
+  jellyfin:
+    port: 1090
+    expose:
+      default: true
+    exposedPort: 1080
+    protocol: TCP
 
 gateway:
   enabled: true
@@ -400,6 +406,13 @@ gateway:
         - name: aleixolab-tls
     jellyseerr:
       port: 1080
+      protocol: HTTPS
+      namespacePolicy:
+        from: All
+      certificateRefs:
+        - name: aleixolab-tls
+    jellyfin:
+      port: 1090
       protocol: HTTPS
       namespacePolicy:
         from: All
