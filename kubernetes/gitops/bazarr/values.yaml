@@ -1,0 +1,38 @@
+env:
+  TZ: America/Sao_Paulo
+  PUID: "1000"
+  PGID: "1000"
+  COMPlus_EnableDiagnostics: "0"
+
+initContainers:
+  init-permissions:
+    image: busybox:latest
+    command: ['sh', '-c', 'chown -R 1000:1000 /config && chmod -R 775 /config']
+    securityContext:
+      runAsUser: 0
+    volumeMounts:
+      - name: config
+        mountPath: /config
+
+securityContext:
+  runAsUser: 1000
+  runAsGroup: 1000
+  readOnlyRootFilesystem: false
+  allowPrivilegeEscalation: false
+
+podSecurityContext:
+  runAsUser: 1000
+  runAsGroup: 1000
+  fsGroup: 1000
+
+persistence:
+  config:
+    enabled: true
+    type: hostPath
+    hostPath: /mnt/data/config/bazarr
+    mountPath: /config
+  media:
+    enabled: true
+    type: hostPath
+    hostPath: /mnt/data
+    mountPath: /data

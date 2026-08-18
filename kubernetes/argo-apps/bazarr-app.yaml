@@ -1,0 +1,29 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: bazarr
+  namespace: argocd
+spec:
+  project: internal-lab
+  sources:
+    - repoURL: 'https://k8s-home-lab.github.io/helm-charts/'
+      targetRevision: 11.3.2
+      chart: bazarr
+      helm:
+        releaseName: bazarr
+        valueFiles:
+          - $values/kubernetes/gitops/bazarr/values.yaml
+
+    - repoURL: 'git@github.com:AleixoLucas42/homelab-v3.git'
+      targetRevision: main
+      ref: values
+
+  destination:
+    name: in-cluster
+    namespace: bazarr
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true
