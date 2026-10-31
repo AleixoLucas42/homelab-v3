@@ -60,7 +60,7 @@ spec:
                 - |
                   unready_types=$(kubectl get pods -l k8s-app=crowdsec \
                     -o jsonpath='{range .items[*]}{.metadata.labels.type}{" "}{.status.conditions[?(@.type=="Ready")].status}{"\n"}{end}' \
-                    | awk '$2 != "True" { print $1 }' | sort -u)
+                    | awk '$2 != "True" { seen[$1] = 1 } END { for (type in seen) printf "%s ", type }')
 
                   if [ -z "$unready_types" ]; then
                     echo "All CrowdSec pods are ready; nothing to restart."
