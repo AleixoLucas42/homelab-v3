@@ -1,6 +1,6 @@
 minecraftServer:
   eula: true
-  version: "1.21.5"
+  version: "1.21.8"
   difficulty: "hard"
   maxPlayers: 5
   pvp: false
@@ -29,7 +29,7 @@ persistence:
   dataDir:
     enabled: true
     storageClass: "local-path"
-    size: 5Gi
+    size: 10Gi
 
 securityContext:
   capabilities:
