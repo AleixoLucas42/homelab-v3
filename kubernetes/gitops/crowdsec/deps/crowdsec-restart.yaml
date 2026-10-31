@@ -1,0 +1,88 @@
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: crowdsec-restart
+  namespace: crowdsec
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: crowdsec-restart
+  namespace: crowdsec
+rules:
+  - apiGroups: [""]
+    resources: ["pods"]
+    verbs: ["get", "list"]
+  - apiGroups: ["apps"]
+    resources: ["deployments", "daemonsets"]
+    resourceNames: ["crowdsec-lapi", "crowdsec-appsec", "crowdsec-agent"]
+    verbs: ["get", "patch"]
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: crowdsec-restart
+  namespace: crowdsec
+subjects:
+  - kind: ServiceAccount
+    name: crowdsec-restart
+    namespace: crowdsec
+roleRef:
+  kind: Role
+  name: crowdsec-restart
+  apiGroup: rbac.authorization.k8s.io
+---
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: crowdsec-restart
+  namespace: crowdsec
+spec:
+  schedule: "0 * * * *"
+  concurrencyPolicy: Forbid
+  startingDeadlineSeconds: 300
+  successfulJobsHistoryLimit: 2
+  failedJobsHistoryLimit: 1
+  jobTemplate:
+    spec:
+      backoffLimit: 0
+      activeDeadlineSeconds: 180
+      template:
+        spec:
+          serviceAccountName: crowdsec-restart
+          restartPolicy: Never
+          containers:
+            - name: restart-unready
+              image: alpine/k8s:1.35.5
+              imagePullPolicy: IfNotPresent
+              command: ["/bin/sh", "-ec"]
+              args:
+                - |
+                  unready_types=$(kubectl get pods -l k8s-app=crowdsec \
+                    -o jsonpath='{range .items[*]}{.metadata.labels.type}{" "}{.status.conditions[?(@.type=="Ready")].status}{"\n"}{end}' \
+                    | awk '$2 != "True" { print $1 }' | sort -u)
+
+                  if [ -z "$unready_types" ]; then
+                    echo "All CrowdSec pods are ready; nothing to restart."
+                    exit 0
+                  fi
+
+                  echo "Unready CrowdSec types: $unready_types"
+
+                  case " $unready_types " in
+                    *" agent "*)
+                      kubectl rollout restart daemonset/crowdsec-agent
+                      ;;
+                  esac
+
+                  case " $unready_types " in
+                    *" appsec "*)
+                      kubectl rollout restart deployment/crowdsec-appsec
+                      ;;
+                  esac
+
+                  case " $unready_types " in
+                    *" lapi "*)
+                      kubectl rollout restart deployment/crowdsec-lapi
+                      ;;
+                  esac
