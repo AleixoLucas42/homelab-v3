@@ -29,7 +29,7 @@ persistence:
   dataDir:
     enabled: true
     storageClass: "local-path"
-    size: 10Gi
+    Size: 10Gi
 
 securityContext:
   capabilities:
