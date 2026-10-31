@@ -13,7 +13,7 @@ pipelines:
 
 websocket:
   redis:
-    enabled: true
+    enabled: false # ativar depois quando for usar
 
 extraEnvVars:
   - name: ENABLE_AUTOMATIONS
