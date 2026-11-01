@@ -8,7 +8,7 @@ minecraftServer:
   serviceType: LoadBalancer
 
 extraEnv:
-  ENABLE_WHITELIST: "true"
+  ENABLE_WHITELIST: "false"
   SERVER_NAME: "homelab-minecraft-server"
   ENABLE_AUTOSTOP: "true"
   AUTOSTOP_TIMEOUT_INIT: "60"
