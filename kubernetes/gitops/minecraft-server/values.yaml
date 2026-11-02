@@ -9,7 +9,7 @@ minecraftServer:
 
 extraEnv:
   ENABLE_WHITELIST: "true"
-  WHITELIST: "LucasAleixo,S4r3c0"
+  WHITELIST: "LucasAleixo,S4r3c0,Dinotsu"
   SERVER_NAME: "homelab-minecraft-server"
   ENABLE_AUTOSTOP: "true"
   AUTOSTOP_TIMEOUT_INIT: "60"
