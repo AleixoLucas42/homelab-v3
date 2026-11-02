@@ -34,13 +34,15 @@ persistence:
     storageClass: "local-path"
     Size: 10Gi
 
+podSecurityContext:
+  fsGroup: 3000
+  fsGroupChangePolicy: OnRootMismatch
+
 securityContext:
+  runAsUser: 1000
+  runAsGroup: 3000
+  allowPrivilegeEscalation: false
   capabilities:
     drop:
       - ALL
-    add:
-      - DAC_OVERRIDE
-      - SETGID
-      - SETUID
-
 replicaCount: 1
