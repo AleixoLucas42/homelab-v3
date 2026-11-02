@@ -1,6 +1,6 @@
 minecraftServer:
   eula: true
-  version: "1.26.3"
+  version: "26.3"
   difficulty: "hard"
   maxPlayers: 5
   pvp: false
