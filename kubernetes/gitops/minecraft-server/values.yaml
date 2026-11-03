@@ -22,7 +22,7 @@ extraEnv:
   AUTOSTOP_PERIOD: "7200"
   TZ: "America/Sao_Paulo"
   VIEW_DISTANCE: "10"
-  SIMULATION_DISTANCE: "8"
+  SIMULATION_DISTANCE: "4"
 
 tty: true
 stdin: true
