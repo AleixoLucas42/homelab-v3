@@ -13,7 +13,7 @@ metadata:
 rules:
   - apiGroups: [""]
     resources: ["pods"]
-    verbs: ["get", "list"]
+    verbs: ["get", "list", "watch"]
   - apiGroups: [""]
     resources: ["pods/exec"]
     verbs: ["create"]
@@ -100,7 +100,16 @@ spec:
 
                   rcon /tellraw @a '{"text":"[server] Cleaning ground items","color":"dark_red"}'
                   log "Removing dropped items with /kill @e[type=item]."
-                  rcon /kill '@e[type=item]'
+                  kill_output="$(rcon /kill '@e[type=item]')"
+                  printf '%s\n' "$kill_output"
+                  items_cleaned="$(printf '%s\n' "$kill_output" | awk '$1 == "Killed" && $2 ~ /^[0-9]+$/ { print $2; exit }')"
+                  if [ -n "$items_cleaned" ]; then
+                    log "Removed $items_cleaned dropped items."
+                  elif printf '%s\n' "$kill_output" | grep -Eiq 'No entit(y|ies) (was|were) found'; then
+                    log "No dropped items were present."
+                  else
+                    log "Could not parse item count from RCON response: $kill_output"
+                  fi
                   rcon /tellraw @a '{"text":"[server] Ground items cleaned","color":"green"}'
                   log "Ground-item cleanup completed successfully."
               resources:
