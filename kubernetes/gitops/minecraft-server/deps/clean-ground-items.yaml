@@ -105,12 +105,15 @@ spec:
                   items_cleaned="$(printf '%s\n' "$kill_output" | awk '$1 == "Killed" && $2 ~ /^[0-9]+$/ { print $2; exit }')"
                   if [ -n "$items_cleaned" ]; then
                     log "Removed $items_cleaned dropped items."
+                    message="$(printf '{"text":"[server] Ground items cleaned: %s","color":"green"}' "$items_cleaned")"
                   elif printf '%s\n' "$kill_output" | grep -Eiq 'No entit(y|ies) (was|were) found'; then
                     log "No dropped items were present."
+                    message='{"text":"[server] No ground items were present.","color":"green"}'
                   else
                     log "Could not parse item count from RCON response: $kill_output"
+                    message='{"text":"[server] Ground items cleaned.","color":"green"}'
                   fi
-                  rcon /tellraw @a '{"text":"[server] Ground items cleaned","color":"green"}'
+                  rcon /tellraw @a "$message"
                   log "Ground-item cleanup completed successfully."
               resources:
                 requests:
