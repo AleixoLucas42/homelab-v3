@@ -4,7 +4,7 @@ minecraftServer:
   difficulty: "hard"
   maxPlayers: 5
   pvp: false
-  memory: "1536M"
+  memory: "2048M"
   serviceType: LoadBalancer
 
 extraEnv:
@@ -16,17 +16,19 @@ extraEnv:
   AUTOSTOP_TIMEOUT_EST: "60"
   AUTOSTOP_PERIOD: "7200"
   TZ: "America/Sao_Paulo"
-  VIEW_DISTANCE: "6"
-  SIMULATION_DISTANCE: "4"
+  VIEW_DISTANCE: "10"
+  SIMULATION_DISTANCE: "6"
 
 tty: true
 stdin: true
 
 resources:
   requests:
-    memory: "2096Mi"
+    memory: "2Gi"
+    cpu: "500m"
   limits:
-    memory: "2096Mi"
+    memory: "4Gi"
+    cpu: "2"
 
 persistence:
   dataDir:
