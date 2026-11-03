@@ -79,6 +79,22 @@ spec:
                     kubectl exec --namespace minecraft "$minecraft_pod" -- rcon-cli "$@"
                   }
 
+                  if ! players_output="$(rcon list)"; then
+                    log "Could not query online players; skipping ground-item cleanup."
+                    exit 1
+                  fi
+                  printf '%s\n' "$players_output"
+                  players_online="$(printf '%s\n' "$players_output" | sed -n 's/^There are \([0-9][0-9]*\) of a max.*/\1/p')"
+                  if [ "$players_online" = "0" ]; then
+                    log "No players are online; skipping ground-item cleanup."
+                    exit 0
+                  fi
+                  if [ -z "$players_online" ]; then
+                    log "Could not parse online player count; skipping ground-item cleanup."
+                    exit 1
+                  fi
+                  log "$players_online player(s) online; starting warning countdown."
+
                   for minutes in 5 4 3 2; do
                     message="$(printf '{"text":"[server] Cleaning ground items in %s minutes","color":"light_purple"}' "$minutes")"
                     rcon /tellraw @a "$message"
