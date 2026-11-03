@@ -21,8 +21,8 @@ extraEnv:
   AUTOSTOP_TIMEOUT_EST: "60"
   AUTOSTOP_PERIOD: "7200"
   TZ: "America/Sao_Paulo"
-  VIEW_DISTANCE: "10"
-  SIMULATION_DISTANCE: "6"
+  VIEW_DISTANCE: "8"
+  SIMULATION_DISTANCE: "4"
 
 tty: true
 stdin: true
