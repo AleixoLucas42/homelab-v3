@@ -1,0 +1,21 @@
+apiVersion: external-secrets.io/v1
+kind: ExternalSecret
+metadata:
+  name: minecraft-rcon-sec
+  namespace: minecraft 
+  annotations:
+    argocd.argoproj.io/sync-wave: "10"
+spec:
+  refreshInterval: "5m"
+  secretStoreRef:
+    name: vault-cluster-backend
+    kind: ClusterSecretStore
+  target:
+    name: minecraft-rcon-sec
+  dataFrom:
+    - extract:
+        key: "aleixohome/kubernetes/secrets/minecraft-server"
+        conversionStrategy: Default
+        decodingStrategy: None
+        metadataPolicy: None
+        nullBytePolicy: Ignore

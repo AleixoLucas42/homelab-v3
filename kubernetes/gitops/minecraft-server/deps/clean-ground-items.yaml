@@ -1,0 +1,100 @@
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: minecraft-clean-ground-items
+  namespace: minecraft
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: minecraft-clean-ground-items
+  namespace: minecraft
+rules:
+  - apiGroups: [""]
+    resources: ["pods"]
+    verbs: ["get", "list"]
+  - apiGroups: [""]
+    resources: ["pods/exec"]
+    verbs: ["create"]
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: minecraft-clean-ground-items
+  namespace: minecraft
+subjects:
+  - kind: ServiceAccount
+    name: minecraft-clean-ground-items
+    namespace: minecraft
+roleRef:
+  kind: Role
+  name: minecraft-clean-ground-items
+  apiGroup: rbac.authorization.k8s.io
+---
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: minecraft-clean-ground-items
+  namespace: minecraft
+spec:
+  schedule: "0 */2 * * *"
+  concurrencyPolicy: Forbid
+  startingDeadlineSeconds: 300
+  successfulJobsHistoryLimit: 1
+  failedJobsHistoryLimit: 2
+  jobTemplate:
+    spec:
+      backoffLimit: 0
+      activeDeadlineSeconds: 600
+      template:
+        spec:
+          serviceAccountName: minecraft-clean-ground-items
+          restartPolicy: Never
+          containers:
+            - name: clean-ground-items
+              image: alpine/k8s:1.35.5
+              imagePullPolicy: IfNotPresent
+              command: ["/bin/sh", "-ec"]
+              args:
+                - |
+                  if ! kubectl wait --namespace minecraft --for=condition=Ready pod -l app=minecraft --timeout=30s; then
+                    echo "Minecraft pod is not ready; skipping ground-item cleanup."
+                    exit 0
+                  fi
+
+                  minecraft_pod="$(kubectl get pods --namespace minecraft -l app=minecraft -o jsonpath='{.items[0].metadata.name}')"
+                  if [ -z "$minecraft_pod" ]; then
+                    echo "Minecraft pod was not found."
+                    exit 1
+                  fi
+
+                  rcon() {
+                    kubectl exec --namespace minecraft "$minecraft_pod" -- rcon-cli "$@"
+                  }
+
+                  for minutes in 5 4 3 2; do
+                    message="$(printf '{"text":"[server] Cleaning ground items in %s minutes","color":"light_purple"}' "$minutes")"
+                    rcon /tellraw @a "$message"
+                    sleep 60
+                  done
+
+                  rcon /tellraw @a '{"text":"[server] Cleaning ground items in 1 minute","color":"red"}'
+                  sleep 60
+
+                  for seconds in 5 4 3 2 1; do
+                    message="$(printf '{"text":"[server] Cleaning ground items in %s seconds","color":"light_purple"}' "$seconds")"
+                    rcon /tellraw @a "$message"
+                    sleep 1
+                  done
+
+                  rcon /tellraw @a '{"text":"[server] Cleaning ground items","color":"dark_red"}'
+                  rcon /kill '@e[type=item]'
+                  rcon /tellraw @a '{"text":"[server] Ground items cleaned","color":"green"}'
+              resources:
+                requests:
+                  cpu: 50m
+                  memory: 64Mi
+                limits:
+                  cpu: 200m
+                  memory: 128Mi

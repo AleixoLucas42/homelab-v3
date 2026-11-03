@@ -6,6 +6,11 @@ minecraftServer:
   pvp: false
   memory: "2048M"
   serviceType: LoadBalancer
+  rcon:
+    enabled: true
+    withGeneratedPassword: false
+    existingSecret: minecraft-rcon-sec
+    secretKey: rcon-password
 
 extraEnv:
   ENABLE_WHITELIST: "true"
