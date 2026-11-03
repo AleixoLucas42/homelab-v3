@@ -4,7 +4,7 @@ minecraftServer:
   difficulty: "hard"
   maxPlayers: 5
   pvp: false
-  memory: "2048M"
+  memory: "3096M"
   serviceType: LoadBalancer
   rcon:
     enabled: true
@@ -21,8 +21,8 @@ extraEnv:
   AUTOSTOP_TIMEOUT_EST: "60"
   AUTOSTOP_PERIOD: "7200"
   TZ: "America/Sao_Paulo"
-  VIEW_DISTANCE: "8"
-  SIMULATION_DISTANCE: "4"
+  VIEW_DISTANCE: "10"
+  SIMULATION_DISTANCE: "8"
 
 tty: true
 stdin: true

@@ -58,16 +58,22 @@ spec:
               command: ["/bin/sh", "-ec"]
               args:
                 - |
+                  log() {
+                    printf '%s %s\n' "$(date -u '+%Y-%m-%dT%H:%M:%SZ')" "$*"
+                  }
+
+                  log "Starting ground-item cleanup sequence."
                   if ! kubectl wait --namespace minecraft --for=condition=Ready pod -l app=minecraft --timeout=30s; then
-                    echo "Minecraft pod is not ready; skipping ground-item cleanup."
+                    log "Minecraft pod is not ready; skipping ground-item cleanup."
                     exit 0
                   fi
 
                   minecraft_pod="$(kubectl get pods --namespace minecraft -l app=minecraft -o jsonpath='{.items[0].metadata.name}')"
                   if [ -z "$minecraft_pod" ]; then
-                    echo "Minecraft pod was not found."
+                    log "Minecraft pod was not found."
                     exit 1
                   fi
+                  log "Using Minecraft pod: $minecraft_pod."
 
                   rcon() {
                     kubectl exec --namespace minecraft "$minecraft_pod" -- rcon-cli "$@"
@@ -76,21 +82,27 @@ spec:
                   for minutes in 5 4 3 2; do
                     message="$(printf '{"text":"[server] Cleaning ground items in %s minutes","color":"light_purple"}' "$minutes")"
                     rcon /tellraw @a "$message"
+                    log "Sent cleanup warning for $minutes minutes; waiting 60 seconds."
                     sleep 60
                   done
 
                   rcon /tellraw @a '{"text":"[server] Cleaning ground items in 1 minute","color":"red"}'
+                  log "Sent one-minute warning; waiting 60 seconds."
                   sleep 60
 
+                  log "Starting final five-second countdown."
                   for seconds in 5 4 3 2 1; do
                     message="$(printf '{"text":"[server] Cleaning ground items in %s seconds","color":"light_purple"}' "$seconds")"
                     rcon /tellraw @a "$message"
+                    log "Sent cleanup warning for $seconds seconds."
                     sleep 1
                   done
 
                   rcon /tellraw @a '{"text":"[server] Cleaning ground items","color":"dark_red"}'
+                  log "Removing dropped items with /kill @e[type=item]."
                   rcon /kill '@e[type=item]'
                   rcon /tellraw @a '{"text":"[server] Ground items cleaned","color":"green"}'
+                  log "Ground-item cleanup completed successfully."
               resources:
                 requests:
                   cpu: 50m
